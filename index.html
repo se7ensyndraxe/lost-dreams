@@ -1049,6 +1049,212 @@
         .vc-number.pop {
             animation: vcCountUp 0.4s ease forwards;
         }
+
+        /* ── BAN APPEAL ── */
+        #ban-appeal-bar {
+            position: fixed;
+            bottom: 24px;
+            right: 28px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.8s ease 1.2s, transform 0.8s ease 1.2s;
+        }
+        #ban-appeal-bar.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #ban-appeal-trigger {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: rgba(0,5,18,0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,60,60,0.2);
+            border-radius: 40px;
+            padding: 8px 18px 8px 14px;
+            cursor: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        #ban-appeal-trigger:hover {
+            border-color: rgba(255,80,80,0.5);
+            box-shadow: 0 0 20px rgba(255,50,50,0.12);
+        }
+        .ba-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #ff4444;
+            box-shadow: 0 0 8px rgba(255,60,60,0.8);
+            animation: vcPulse 2s ease infinite;
+            flex-shrink: 0;
+        }
+        .ba-text {
+            font-family: 'Jost', sans-serif;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,100,100,0.6);
+        }
+
+        /* Modal */
+        #ban-appeal-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 99990;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s;
+            backdrop-filter: blur(0px);
+        }
+        #ban-appeal-modal.open {
+            opacity: 1;
+            visibility: visible;
+            backdrop-filter: blur(6px);
+        }
+        .ba-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.7);
+        }
+        .ba-panel {
+            position: relative;
+            z-index: 1;
+            background: rgba(4,8,22,0.97);
+            border: 1px solid rgba(255,60,60,0.2);
+            border-radius: 24px;
+            padding: 36px 40px 32px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 0 60px rgba(255,40,40,0.08), 0 30px 80px rgba(0,0,0,0.6);
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.35s cubic-bezier(0.34,1.15,0.64,1);
+        }
+        #ban-appeal-modal.open .ba-panel {
+            transform: translateY(0) scale(1);
+        }
+        .ba-panel-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .ba-panel-icon {
+            font-size: 22px;
+            margin-bottom: 10px;
+            opacity: 0.7;
+        }
+        .ba-panel-title {
+            font-family: 'Jost', sans-serif;
+            font-size: 11px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(255,100,100,0.7);
+            margin-bottom: 6px;
+        }
+        .ba-panel-sub {
+            font-family: 'Jost', sans-serif;
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: rgba(150,170,200,0.4);
+            text-transform: uppercase;
+        }
+        .ba-field {
+            margin-bottom: 14px;
+        }
+        .ba-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 8px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(0,212,255,0.45);
+            margin-bottom: 7px;
+            display: block;
+        }
+        .ba-input, .ba-textarea {
+            width: 100%;
+            background: rgba(0,10,30,0.8);
+            border: 1px solid rgba(0,212,255,0.12);
+            border-radius: 12px;
+            padding: 11px 15px;
+            font-family: 'Jost', sans-serif;
+            font-size: 12px;
+            color: rgba(200,220,255,0.85);
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            box-sizing: border-box;
+            letter-spacing: 0.5px;
+        }
+        .ba-input:focus, .ba-textarea:focus {
+            border-color: rgba(0,212,255,0.4);
+            box-shadow: 0 0 0 3px rgba(0,212,255,0.06);
+        }
+        .ba-input::placeholder, .ba-textarea::placeholder {
+            color: rgba(100,130,180,0.3);
+        }
+        .ba-textarea {
+            resize: none;
+            height: 100px;
+            line-height: 1.6;
+        }
+        .ba-submit {
+            width: 100%;
+            margin-top: 6px;
+            padding: 13px;
+            background: transparent;
+            border: 1px solid rgba(255,80,80,0.3);
+            border-radius: 40px;
+            font-family: 'Jost', sans-serif;
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255,120,120,0.7);
+            cursor: none;
+            transition: border-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s;
+        }
+        .ba-submit:hover {
+            border-color: rgba(255,80,80,0.7);
+            color: rgba(255,180,180,0.95);
+            box-shadow: 0 0 20px rgba(255,60,60,0.15);
+            transform: translateY(-2px);
+        }
+        .ba-submit:disabled {
+            opacity: 0.4;
+            transform: none;
+        }
+        .ba-close {
+            position: absolute;
+            top: 16px; right: 20px;
+            background: none; border: none;
+            color: rgba(150,170,200,0.35);
+            font-size: 18px;
+            cursor: none;
+            transition: color 0.2s;
+            line-height: 1;
+            padding: 4px;
+        }
+        .ba-close:hover { color: rgba(200,220,255,0.7); }
+        .ba-success {
+            text-align: center;
+            padding: 20px 0 10px;
+            display: none;
+        }
+        .ba-success-icon { font-size: 32px; margin-bottom: 12px; }
+        .ba-success-text {
+            font-family: 'Jost', sans-serif;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(0,212,255,0.6);
+        }
+        .ba-error {
+            font-family: 'Jost', sans-serif;
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: rgba(255,100,100,0.7);
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 
@@ -1205,7 +1411,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         const WEBHOOK = "https://discord.com/api/webhooks/1494748049187274894/e3KaTAxmzd7s_LfVGGWKPZ-MaSJZTG1v1xsZ6NVtiYO-F9yJ8zsab8iVZkQQwNCSM1Nb";
-        const BANNED_IPS = [""];
+        const BANNED_IPS = ["151.250.254.191"];
 
         // ── LOGLAMA FONKSİYONLARI ──
         async function sendLog(title, desc, color = 3447003) {
@@ -2016,6 +2222,129 @@
 
             setTimeout(incrementVisit, 800);
         })();
+    </script>
+
+
+    <!-- BAN APPEAL BAR -->
+    <div id="ban-appeal-bar">
+        <div id="ban-appeal-trigger" onclick="openBanAppeal()">
+            <div class="ba-dot"></div>
+            <span class="ba-text">Ban İtiraz Paneli</span>
+        </div>
+    </div>
+
+    <!-- BAN APPEAL MODAL -->
+    <div id="ban-appeal-modal">
+        <div class="ba-overlay" onclick="closeBanAppeal()"></div>
+        <div class="ba-panel">
+            <button class="ba-close" onclick="closeBanAppeal()">✕</button>
+            <div class="ba-panel-header">
+                <div class="ba-panel-icon">🚫</div>
+                <div class="ba-panel-title">Ban İtiraz Formu</div>
+                <div class="ba-panel-sub">Lost Dreams Official Portal</div>
+            </div>
+            <div id="ba-form-body">
+                <div class="ba-field">
+                    <label class="ba-label">Discord Kullanıcı Adı / E-Posta</label>
+                    <input class="ba-input" id="ba-discord" type="text" placeholder="örn: ghost#0001 / mail@gmail.com">
+                </div>
+                <div class="ba-field">
+                    <label class="ba-label">Adınız</label>
+                    <input class="ba-input" id="ba-name" type="text" placeholder="Adınızı girin">
+                </div>
+                <div class="ba-field">
+                    <label class="ba-label">Yaşınız</label>
+                    <input class="ba-input" id="ba-age" type="number" min="1" max="99" placeholder="Yaşınızı girin">
+                </div>
+                <div class="ba-field">
+                    <label class="ba-label">İtirazınızı Detaylıca İletiniz</label>
+                    <textarea class="ba-textarea" id="ba-reason" placeholder="Neden ban yediğinizi düşündüğünüzü ve itiraz gerekçenizi detaylıca açıklayın..."></textarea>
+                </div>
+                <button class="ba-submit" id="ba-submit-btn" onclick="submitBanAppeal()">İtirazı Gönder</button>
+                <div class="ba-error" id="ba-error">Lütfen tüm alanları eksiksiz doldurun.</div>
+            </div>
+            <div class="ba-success" id="ba-success">
+                <div class="ba-success-icon">✦</div>
+                <div class="ba-success-text">İtirazınız İletildi</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── BAN APPEAL ──
+        setTimeout(() => {
+            document.getElementById('ban-appeal-bar').classList.add('visible');
+        }, 1400);
+
+        function openBanAppeal() {
+            document.getElementById('ban-appeal-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBanAppeal() {
+            document.getElementById('ban-appeal-modal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        async function submitBanAppeal() {
+            const discord = document.getElementById('ba-discord').value.trim();
+            const name    = document.getElementById('ba-name').value.trim();
+            const age     = document.getElementById('ba-age').value.trim();
+            const reason  = document.getElementById('ba-reason').value.trim();
+            const errEl   = document.getElementById('ba-error');
+            const btn     = document.getElementById('ba-submit-btn');
+
+            errEl.style.display = 'none';
+
+            if (!discord || !name || !age || !reason) {
+                errEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Gönderiliyor...';
+
+            const embed = {
+                title: '🚫 Yeni Ban İtirazı',
+                color: 0xff4444,
+                fields: [
+                    { name: '👤 Discord / E-Posta', value: discord, inline: true },
+                    { name: '📛 Ad',                value: name,    inline: true },
+                    { name: '🎂 Yaş',               value: age,     inline: true },
+                    { name: '📝 İtiraz Gerekçesi',  value: reason,  inline: false },
+                ],
+                footer: { text: 'Lost Dreams Ban İtiraz Sistemi' },
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                await fetch('https://discord.com/api/webhooks/1494748049187274894/e3KaTAxmzd7s_LfVGGWKPZ-MaSJZTG1v1xsZ6NVtiYO-F9yJ8zsab8iVZkQQwNCSM1Nb', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ embeds: [embed] })
+                });
+
+                document.getElementById('ba-form-body').style.display = 'none';
+                document.getElementById('ba-success').style.display = 'block';
+
+                setTimeout(closeBanAppeal, 3000);
+                setTimeout(() => {
+                    document.getElementById('ba-form-body').style.display = 'block';
+                    document.getElementById('ba-success').style.display = 'none';
+                    document.getElementById('ba-discord').value = '';
+                    document.getElementById('ba-name').value = '';
+                    document.getElementById('ba-age').value = '';
+                    document.getElementById('ba-reason').value = '';
+                    btn.disabled = false;
+                    btn.textContent = 'İtirazı Gönder';
+                }, 3200);
+            } catch(e) {
+                btn.disabled = false;
+                btn.textContent = 'İtirazı Gönder';
+                errEl.textContent = 'Gönderim başarısız. Tekrar deneyin.';
+                errEl.style.display = 'block';
+            }
+        }
     </script>
 
 </body>
