@@ -1514,8 +1514,7 @@
             shootingStars.push({
                 x: Math.random() * canvas.width * 1.2 - canvas.width * 0.1,
                 y: Math.random() * canvas.height * 0.5 - 50,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
+                vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
                 size: 1.2 + Math.random() * 1.8,
                 trail: [], maxTrail: 18 + Math.floor(Math.random() * 22),
                 opacity: 0, done: false
@@ -1523,90 +1522,89 @@
         }
 
         function buildGalaxy() {
-            galaxyStars = [];
-            twinklers = [];
+            galaxyStars = []; twinklers = [];
             const W = canvas.width, H = canvas.height;
 
-            // ── Milky Way band: diagonal stripe across screen ──
-            const bandAngle = -0.38; // slight diagonal
-            const bandCos = Math.cos(bandAngle), bandSin = Math.sin(bandAngle);
-            const starCount = Math.min(2800, Math.floor(W * H / 420));
+            // Milky Way band: diagonal band crossing screen
+            // Band runs from bottom-left to top-right
+            const TOTAL = Math.floor(W * H / 180); // much denser
 
-            for (let i = 0; i < starCount; i++) {
-                // Project random point onto band axis
-                const rx = Math.random() * W * 1.4 - W * 0.2;
-                const ry = Math.random() * H * 1.4 - H * 0.2;
+            for (let i = 0; i < TOTAL; i++) {
+                const rx = Math.random() * W;
+                const ry = Math.random() * H;
 
-                // Rotated coord along band
-                const along = rx * bandCos + ry * bandSin;
-                const across = -rx * bandSin + ry * bandCos;
+                // Project point perpendicular to band axis (angle ~-30deg diagonal)
+                const bandAngle = 0.52; // radians
+                const bx = rx * Math.cos(bandAngle) + ry * Math.sin(bandAngle);
+                const by = -rx * Math.sin(bandAngle) + ry * Math.cos(bandAngle);
 
-                // Band center offset (diagonal band running ~center)
-                const bandCenter = H * 0.5 * bandCos + W * 0.5 * bandSin;
-                const distFromCenter = Math.abs(across - bandCenter * 0.3);
+                // Band center in rotated space
+                const centerBy = (W * 0.5) * (-Math.sin(bandAngle)) + (H * 0.5) * Math.cos(bandAngle);
+                const distFromBand = Math.abs(by - centerBy);
 
-                // Band width varies - core narrow, halo wide
-                const bandWidth = H * 0.22;
-                const coreWidth = H * 0.06;
+                const bandHalfWidth = H * 0.28;
+                const coreHalfWidth = H * 0.055;
 
-                // Density falloff from band center
-                const bandDensity = Math.exp(-(distFromCenter * distFromCenter) / (2 * bandWidth * bandWidth));
-                const coreDensity = Math.exp(-(distFromCenter * distFromCenter) / (2 * coreWidth * coreWidth));
+                const bandFactor = Math.exp(-(distFromBand * distFromBand) / (2 * bandHalfWidth * bandHalfWidth));
+                const coreFactor = Math.exp(-(distFromBand * distFromBand) / (2 * coreHalfWidth * coreHalfWidth));
 
-                // Skip stars outside band (probabilistic)
-                const threshold = 0.04 + bandDensity * 0.96;
-                if (Math.random() > threshold) continue;
+                // Accept probability: high in band, low outside
+                const accept = 0.012 + bandFactor * 0.988;
+                if (Math.random() > accept) continue;
 
-                // Size: core stars bigger
-                const inCore = coreDensity > 0.3;
-                const size = inCore
-                    ? 0.4 + Math.random() * 1.2
-                    : 0.15 + Math.random() * 0.7;
+                const inCore = coreFactor > 0.45;
+                const inBand = bandFactor > 0.15;
 
-                // Color: core warm white/blue-white, halo cooler
-                const hue = inCore
-                    ? (Math.random() < 0.3 ? 200 : Math.random() < 0.5 ? 40 : 0)
-                    : 210 + Math.random() * 40;
-                const sat = inCore ? (Math.random() < 0.3 ? 60 : 10) : 30 + Math.random() * 40;
-                const light = 70 + Math.random() * 30;
+                // Size
+                let size;
+                if (inCore) size = 0.5 + Math.random() * 1.6;
+                else if (inBand) size = 0.2 + Math.random() * 0.9;
+                else size = 0.1 + Math.random() * 0.45;
 
-                // Opacity: brighter in core
-                const baseOp = inCore
-                    ? 0.4 + Math.random() * 0.6
-                    : 0.08 + Math.random() * 0.35 * bandDensity;
+                // Opacity - much higher
+                let baseOp;
+                if (inCore) baseOp = 0.55 + Math.random() * 0.45;
+                else if (inBand) baseOp = 0.18 + Math.random() * 0.5 * bandFactor;
+                else baseOp = 0.05 + Math.random() * 0.15;
 
-                const star = {
-                    x: rx, y: ry,
-                    size,
-                    baseOp,
-                    color: `hsl(${hue},${sat}%,${light}%)`,
-                    inCore,
-                    twinkle: Math.random() < (inCore ? 0.25 : 0.08)
-                };
+                // Color
+                let h, s, l;
+                if (inCore) {
+                    const r = Math.random();
+                    if (r < 0.25) { h = 200; s = 70; l = 85; }       // blue-white
+                    else if (r < 0.45) { h = 35; s = 80; l = 80; }   // orange giant
+                    else if (r < 0.6)  { h = 220; s = 50; l = 90; }  // white-blue
+                    else { h = 0; s = 5; l = 95; }                     // pure white
+                } else if (inBand) {
+                    h = 210 + Math.random() * 50; s = 20 + Math.random() * 40; l = 75 + Math.random() * 20;
+                } else {
+                    h = 220 + Math.random() * 30; s = 15; l = 70 + Math.random() * 20;
+                }
+
+                const star = { x: rx, y: ry, size, baseOp, h, s, l, inCore, inBand,
+                    twinkle: Math.random() < (inCore ? 0.3 : inBand ? 0.1 : 0.04) };
 
                 galaxyStars.push(star);
-
                 if (star.twinkle) {
                     twinklers.push({
                         ref: star,
                         phase: Math.random() * Math.PI * 2,
-                        speed: 0.008 + Math.random() * 0.025,
-                        amp: 0.4 + Math.random() * 0.55
+                        speed: 0.01 + Math.random() * 0.03,
+                        amp: 0.35 + Math.random() * 0.6
                     });
                 }
             }
 
-            // ── Extra scattered field stars (outside band) ──
-            const fieldCount = Math.min(600, Math.floor(W * H / 1800));
-            for (let i = 0; i < fieldCount; i++) {
+            // Extra field stars everywhere
+            const FIELD = Math.floor(W * H / 800);
+            for (let i = 0; i < FIELD; i++) {
                 galaxyStars.push({
-                    x: Math.random() * W,
-                    y: Math.random() * H,
-                    size: 0.15 + Math.random() * 0.5,
-                    baseOp: 0.04 + Math.random() * 0.18,
-                    color: `hsl(${210 + Math.random()*40},30%,${75+Math.random()*25}%)`,
-                    inCore: false,
-                    twinkle: Math.random() < 0.05
+                    x: Math.random() * W, y: Math.random() * H,
+                    size: 0.1 + Math.random() * 0.4,
+                    baseOp: 0.04 + Math.random() * 0.14,
+                    h: 215, s: 20, l: 75,
+                    inCore: false, inBand: false,
+                    twinkle: Math.random() < 0.06
                 });
             }
         }
@@ -1616,81 +1614,117 @@
             canvas.height = window.innerHeight;
             buildGalaxy();
             shootingStars = [];
-            for (let i = 0; i < 12; i++) {
-                setTimeout(spawnShootingStar, Math.random() * 4000);
-            }
+            for (let i = 0; i < 12; i++) setTimeout(spawnShootingStar, Math.random() * 4000);
+        }
+
+        // Pre-render galaxy to offscreen canvas for performance
+        let galaxyCanvas = null;
+        function renderGalaxyOffscreen() {
+            galaxyCanvas = document.createElement('canvas');
+            galaxyCanvas.width = canvas.width;
+            galaxyCanvas.height = canvas.height;
+            const gctx = galaxyCanvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+
+            // ── Nebula glow layers ──
+            // Wide diffuse band
+            const bandAngle = 0.52;
+            gctx.save();
+            gctx.translate(W/2, H/2);
+            gctx.rotate(-bandAngle);
+            
+            // Outer halo
+            const outerGrad = gctx.createLinearGradient(0, -H*0.55, 0, H*0.55);
+            outerGrad.addColorStop(0,    'rgba(10,20,80,0)');
+            outerGrad.addColorStop(0.25, 'rgba(20,35,110,0.06)');
+            outerGrad.addColorStop(0.42, 'rgba(35,55,150,0.13)');
+            outerGrad.addColorStop(0.5,  'rgba(55,80,180,0.18)');
+            outerGrad.addColorStop(0.58, 'rgba(35,55,150,0.13)');
+            outerGrad.addColorStop(0.75, 'rgba(20,35,110,0.06)');
+            outerGrad.addColorStop(1,    'rgba(10,20,80,0)');
+            gctx.fillStyle = outerGrad;
+            gctx.fillRect(-W, -H, W*2, H*2);
+
+            // Inner brighter band
+            const innerGrad = gctx.createLinearGradient(0, -H*0.2, 0, H*0.2);
+            innerGrad.addColorStop(0,   'rgba(60,90,200,0)');
+            innerGrad.addColorStop(0.3, 'rgba(80,110,220,0.09)');
+            innerGrad.addColorStop(0.5, 'rgba(100,130,240,0.16)');
+            innerGrad.addColorStop(0.7, 'rgba(80,110,220,0.09)');
+            innerGrad.addColorStop(1,   'rgba(60,90,200,0)');
+            gctx.fillStyle = innerGrad;
+            gctx.fillRect(-W, -H*0.2, W*2, H*0.4);
+
+            gctx.restore();
+
+            // Warm galactic core glow
+            const coreGrad = gctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, W*0.22);
+            coreGrad.addColorStop(0,   'rgba(160,120,60,0.12)');
+            coreGrad.addColorStop(0.3, 'rgba(120,90,50,0.07)');
+            coreGrad.addColorStop(0.6, 'rgba(80,60,40,0.03)');
+            coreGrad.addColorStop(1,   'rgba(0,0,0,0)');
+            gctx.fillStyle = coreGrad;
+            gctx.fillRect(0, 0, W, H);
+
+            // Dust lane
+            gctx.save();
+            gctx.translate(W/2, H/2);
+            gctx.rotate(-bandAngle);
+            const dustGrad = gctx.createLinearGradient(0, -H*0.04, 0, H*0.04);
+            dustGrad.addColorStop(0,   'rgba(0,0,0,0)');
+            dustGrad.addColorStop(0.4, 'rgba(0,0,5,0.05)');
+            dustGrad.addColorStop(0.5, 'rgba(0,0,8,0.09)');
+            dustGrad.addColorStop(0.6, 'rgba(0,0,5,0.05)');
+            dustGrad.addColorStop(1,   'rgba(0,0,0,0)');
+            gctx.fillStyle = dustGrad;
+            gctx.fillRect(-W, -H*0.04, W*2, H*0.08);
+            gctx.restore();
+
+            // Draw all static stars onto offscreen
+            gctx.globalCompositeOperation = 'screen';
+            galaxyStars.forEach(s => {
+                gctx.beginPath();
+                gctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                gctx.fillStyle = `hsla(${s.h},${s.s}%,${s.l}%,${s.baseOp})`;
+                gctx.fill();
+            });
+            gctx.globalCompositeOperation = 'source-over';
         }
 
         function drawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const t = performance.now() * 0.001;
 
-            // Update twinklers
-            twinklers.forEach(tw => { tw.phase += tw.speed; });
+            // Draw pre-rendered galaxy
+            if (galaxyCanvas) ctx.drawImage(galaxyCanvas, 0, 0);
 
-            // ── Draw galaxy stars ──
-            galaxyStars.forEach(s => {
-                let op = s.baseOp;
-                // find twinkler
-                // (twinkle is baked into twinklers array separately)
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-                ctx.fillStyle = s.color.replace(')', `,${op})`).replace('hsl', 'hsla');
-                ctx.fill();
-            });
-
-            // Twinkle overlay
+            // Draw twinklers on top (animated)
+            ctx.globalCompositeOperation = 'screen';
             twinklers.forEach(tw => {
+                tw.phase += tw.speed;
                 const s = tw.ref;
                 const pulse = 0.5 + 0.5 * Math.sin(tw.phase);
-                const extra = tw.amp * pulse;
+                const opBoost = tw.amp * pulse;
+                const newOp = Math.min(1, s.baseOp + opBoost);
+                const newSize = s.size * (1 + pulse * 0.8);
+
+                if (s.inCore) {
+                    // Glow effect for bright stars
+                    const grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, newSize * 3);
+                    grd.addColorStop(0,   `hsla(${s.h},${s.s}%,${s.l}%,${newOp})`);
+                    grd.addColorStop(0.4, `hsla(${s.h},${s.s}%,${s.l}%,${newOp * 0.3})`);
+                    grd.addColorStop(1,   `hsla(${s.h},${s.s}%,${s.l}%,0)`);
+                    ctx.fillStyle = grd;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, newSize * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
                 ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size * (1 + pulse * 0.6), 0, Math.PI * 2);
-                ctx.fillStyle = s.color.replace(')', `,${Math.min(1, s.baseOp + extra)})`).replace('hsl', 'hsla');
-                ctx.shadowColor = s.inCore ? 'rgba(180,220,255,0.7)' : 'rgba(150,200,255,0.4)';
-                ctx.shadowBlur = s.inCore ? 4 * pulse : 2 * pulse;
+                ctx.arc(s.x, s.y, newSize, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${s.h},${s.s}%,${s.l}%,${newOp})`;
                 ctx.fill();
-                ctx.shadowBlur = 0;
             });
-
-            // ── Milky Way nebula glow (soft painted bands) ──
-            const W = canvas.width, H = canvas.height;
-            ctx.save();
-            ctx.globalCompositeOperation = 'screen';
-
-            // Core glow band
-            const cg = ctx.createLinearGradient(0, H * 0.65, W, H * 0.35);
-            cg.addColorStop(0,   'rgba(20,30,80,0)');
-            cg.addColorStop(0.2, 'rgba(30,50,120,0.045)');
-            cg.addColorStop(0.35,'rgba(60,80,160,0.07)');
-            cg.addColorStop(0.5, 'rgba(80,100,180,0.09)');
-            cg.addColorStop(0.65,'rgba(60,80,160,0.07)');
-            cg.addColorStop(0.8, 'rgba(30,50,120,0.045)');
-            cg.addColorStop(1,   'rgba(20,30,80,0)');
-            ctx.fillStyle = cg;
-            ctx.fillRect(0, 0, W, H);
-
-            // Warm core center
-            const wg = ctx.createRadialGradient(W*0.48, H*0.5, 0, W*0.48, H*0.5, W*0.28);
-            wg.addColorStop(0,   'rgba(120,90,60,0.055)');
-            wg.addColorStop(0.4, 'rgba(80,60,40,0.03)');
-            wg.addColorStop(1,   'rgba(0,0,0,0)');
-            ctx.fillStyle = wg;
-            ctx.fillRect(0, 0, W, H);
-
-            // Dust lane (slightly darker strip in center of band)
-            const dg = ctx.createLinearGradient(0, H*0.6, W, H*0.4);
-            dg.addColorStop(0,    'rgba(0,0,0,0)');
-            dg.addColorStop(0.42, 'rgba(0,0,0,0)');
-            dg.addColorStop(0.48, 'rgba(0,0,10,0.04)');
-            dg.addColorStop(0.5,  'rgba(0,0,10,0.06)');
-            dg.addColorStop(0.52, 'rgba(0,0,10,0.04)');
-            dg.addColorStop(0.58, 'rgba(0,0,0,0)');
-            dg.addColorStop(1,    'rgba(0,0,0,0)');
-            ctx.fillStyle = dg;
-            ctx.fillRect(0, 0, W, H);
-
-            ctx.restore();
+            ctx.globalCompositeOperation = 'source-over';
 
             // ── Shooting stars ──
             shootingStars.forEach(s => {
@@ -1724,8 +1758,9 @@
             requestAnimationFrame(drawCanvas);
         }
 
-        window.addEventListener('resize', initCanvas);
+        window.addEventListener('resize', () => { initCanvas(); setTimeout(renderGalaxyOffscreen, 50); });
         initCanvas();
+        renderGalaxyOffscreen();
         drawCanvas();
     </script>
 
