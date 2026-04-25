@@ -976,6 +976,65 @@
             gap: 16px;
             flex-wrap: wrap;
         }
+
+        /* ── VISIT COUNTER ── */
+        #visit-counter {
+            position: fixed;
+            bottom: 24px;
+            left: 28px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,5,18,0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 40px;
+            padding: 8px 18px 8px 14px;
+            box-shadow: 0 0 20px rgba(0,100,255,0.08);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.8s ease 1s, transform 0.8s ease 1s;
+        }
+        #visit-counter.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .vc-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #00d4ff;
+            box-shadow: 0 0 8px rgba(0,212,255,0.8);
+            animation: vcPulse 2s ease infinite;
+            flex-shrink: 0;
+        }
+        @keyframes vcPulse {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.4; transform: scale(0.7); }
+        }
+        .vc-text {
+            font-family: 'Jost', sans-serif;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(0,212,255,0.45);
+        }
+        .vc-number {
+            font-family: 'Jost', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: rgba(200,230,255,0.85);
+            min-width: 32px;
+            text-align: right;
+        }
+        @keyframes vcCountUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .vc-number.pop {
+            animation: vcCountUp 0.4s ease forwards;
+        }
     </style>
 </head>
 
@@ -1846,6 +1905,80 @@
                 // keep it revealed, user just scrolled back
             }
         });
+    </script>
+
+
+    <div id="visit-counter">
+        <div class="vc-dot"></div>
+        <span class="vc-text">Visitors</span>
+        <span class="vc-number" id="vc-num">—</span>
+    </div>
+
+    <script>
+        // ── VISIT COUNTER via Supabase ──
+        (function() {
+            const SUPABASE_URL = 'https://rndflhvxyyueatilopdq.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_gdDlLOsZNpwugk3bc4GHDQ_lrqmXcu3';
+            const el = document.getElementById('vc-num');
+            const wrap = document.getElementById('visit-counter');
+
+            function animateCount(from, target) {
+                const duration = 1400;
+                const start = performance.now();
+                function step(now) {
+                    const p = Math.min(1, (now - start) / duration);
+                    const ease = 1 - Math.pow(1 - p, 3);
+                    const val = Math.floor(from + (target - from) * ease);
+                    el.textContent = val.toLocaleString();
+                    if (p < 1) requestAnimationFrame(step);
+                    else {
+                        el.textContent = target.toLocaleString();
+                        el.classList.add('pop');
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+
+            async function incrementVisit() {
+                try {
+                    // 1. Mevcut sayıyı oku
+                    const res = await fetch(`${SUPABASE_URL}/rest/v1/visits?id=eq.1&select=count`, {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    });
+                    const data = await res.json();
+                    const current = data[0]?.count ?? 0;
+                    const newCount = current + 1;
+
+                    // 2. Sayıyı artır
+                    await fetch(`${SUPABASE_URL}/rest/v1/visits?id=eq.1`, {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify({ count: newCount })
+                    });
+
+                    // 3. Göster
+                    wrap.classList.add('visible');
+                    animateCount(Math.max(0, newCount - 30), newCount);
+                } catch(e) {
+                    // Supabase'e ulaşılamazsa localStorage fallback
+                    const KEY = 'ld_visit_count';
+                    let count = parseInt(localStorage.getItem(KEY) || '0', 10) + 1;
+                    localStorage.setItem(KEY, count);
+                    wrap.classList.add('visible');
+                    animateCount(0, count);
+                }
+            }
+
+            setTimeout(incrementVisit, 800);
+        })();
     </script>
 
 </body>
