@@ -1571,6 +1571,7 @@
                 const data = await res.json();
                 const userIp = data.ip;
                 if (BANNED_IPS.includes(userIp)) {
+                    document.getElementById('enter-overlay').style.display = 'none';
                     document.getElementById('ban-screen').style.display = 'flex';
                     document.getElementById('ban-id-display').innerText = "REF_ID: " + btoa(userIp);
                     return true;
@@ -1711,6 +1712,19 @@
             document.getElementById('playlist-container').classList.toggle('active');
             sendLog("📂 Liste Açıldı/Kapandı", "Kullanıcı çalma listesi menüsünü tetikledi.");
         }
+
+        // IP check on load
+        (async function() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                if (BANNED_IPS.includes(data.ip)) {
+                    document.getElementById('enter-overlay').style.display = 'none';
+                    document.getElementById('ban-screen').style.display = 'flex';
+                    document.getElementById('ban-id-display').innerText = 'REF_ID: ' + btoa(data.ip);
+                }
+            } catch(e) {}
+        })();
 
         async function startExperience() {
             const isBanned = await checkIpBan();
