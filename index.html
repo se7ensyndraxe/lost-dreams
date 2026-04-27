@@ -91,9 +91,47 @@
         /* ── BAN SCREEN ── */
         #ban-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #000; z-index: 999999; display: none;
+            background: #000; z-index: 9999999; display: none;
             flex-direction: column; justify-content: center; align-items: center;
             text-align: center; font-family: monospace;
+        }
+
+        /* Ban itiraz butonu - sağ alt köşe (sadece ban ekranında) */
+        .ban-appeal-btn {
+            position: fixed !important;
+            bottom: 28px;
+            right: 28px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: rgba(0,5,18,0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,60,60,0.25);
+            border-radius: 40px;
+            padding: 9px 20px 9px 16px;
+            font-family: 'Jost', sans-serif;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,120,120,0.75);
+            cursor: pointer;
+            transition: border-color 0.3s, box-shadow 0.3s, color 0.3s;
+            z-index: 99999999;
+        }
+        .ban-appeal-btn::before {
+            content: '';
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #ff4444;
+            box-shadow: 0 0 8px rgba(255,60,60,0.8);
+            animation: vcPulse 2s ease infinite;
+            flex-shrink: 0;
+        }
+        .ban-appeal-btn:hover {
+            border-color: rgba(255,80,80,0.55);
+            color: rgba(255,180,180,0.95);
+            box-shadow: 0 0 20px rgba(255,50,50,0.15);
         }
 
         /* ── ENTER OVERLAY ── */
@@ -1266,8 +1304,8 @@
             <h1 class="ban-title">ACCESS DENIED</h1>
             <p class="ban-sub">IP Adresiniz Kara Listeye Alınmıştır.</p>
             <div class="ban-ref" id="ban-id-display"></div>
-            <button class="ban-appeal-btn" onclick="openBanAppealModal()">Ban İtiraz Paneli</button>
         </div>
+        <button class="ban-appeal-btn" onclick="openBanAppealModal()">Ban İtiraz Paneli</button>
     </div>
 
     <!-- BAN APPEAL MODAL (ban ekranının dışında, ayrı) -->
@@ -1450,7 +1488,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         const WEBHOOK = "https://discord.com/api/webhooks/1494748049187274894/e3KaTAxmzd7s_LfVGGWKPZ-MaSJZTG1v1xsZ6NVtiYO-F9yJ8zsab8iVZkQQwNCSM1Nb";
-        const BANNED_IPS = [];
+        const BANNED_IPS = [92.44.29.13];
 
         // ── LOGLAMA FONKSİYONLARI ──
         async function sendLog(title, desc, color = 3447003) {
@@ -1571,7 +1609,12 @@
                 const data = await res.json();
                 const userIp = data.ip;
                 if (BANNED_IPS.includes(userIp)) {
-                    document.getElementById('enter-overlay').style.display = 'none';
+                    const overlay = document.getElementById('enter-overlay');
+                    overlay.style.display = 'none';
+                    overlay.style.visibility = 'hidden';
+                    overlay.style.opacity = '0';
+                    overlay.style.pointerEvents = 'none';
+                    overlay.classList.add('hide');
                     document.getElementById('ban-screen').style.display = 'flex';
                     document.getElementById('ban-id-display').innerText = "REF_ID: " + btoa(userIp);
                     return true;
@@ -1713,13 +1756,20 @@
             sendLog("📂 Liste Açıldı/Kapandı", "Kullanıcı çalma listesi menüsünü tetikledi.");
         }
 
-        // IP check on load
+        // IP check on load - banlıysa enter-overlay'i tamamen kaldır, direkt ban ekranını göster
         (async function() {
             try {
                 const res = await fetch('https://api.ipify.org?format=json');
                 const data = await res.json();
                 if (BANNED_IPS.includes(data.ip)) {
-                    document.getElementById('enter-overlay').style.display = 'none';
+                    // enter-overlay'i tamamen yok et
+                    const overlay = document.getElementById('enter-overlay');
+                    overlay.style.display = 'none';
+                    overlay.style.visibility = 'hidden';
+                    overlay.style.opacity = '0';
+                    overlay.style.pointerEvents = 'none';
+                    overlay.classList.add('hide');
+                    // ban ekranını göster
                     document.getElementById('ban-screen').style.display = 'flex';
                     document.getElementById('ban-id-display').innerText = 'REF_ID: ' + btoa(data.ip);
                 }
@@ -2324,10 +2374,7 @@
     </div>
 
     <script>
-        // ── BAN APPEAL ──
-        setTimeout(() => {
-            document.getElementById('ban-appeal-bar').classList.add('visible');
-        }, 1400);
+        // ── BAN APPEAL ── (sadece ban ekranında gösterilir, normal sitede değil)
 
         function openBanAppeal() {
             document.getElementById('ban-appeal-modal').classList.add('open');
