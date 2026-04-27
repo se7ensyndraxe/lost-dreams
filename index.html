@@ -96,6 +96,61 @@
             text-align: center; font-family: monospace;
         }
 
+        /* ── BAN SCREEN ÖZEL CURSOR ── */
+        #ban-cursor-dot {
+            position: fixed; top: 0; left: 0;
+            width: 10px; height: 10px;
+            background: #ff3333;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999999999;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px #ff3333, 0 0 24px rgba(255,50,50,0.6);
+            transition: transform 0.06s ease;
+        }
+        #ban-cursor-ring {
+            position: fixed; top: 0; left: 0;
+            width: 36px; height: 36px;
+            border: 1px solid rgba(255,50,50,0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999999998;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s ease, height 0.2s ease;
+        }
+        /* Ortadaki çarpı işareti */
+        #ban-cursor-cross {
+            position: fixed; top: 0; left: 0;
+            width: 14px; height: 14px;
+            pointer-events: none;
+            z-index: 999999999;
+            transform: translate(-50%, -50%);
+        }
+        #ban-cursor-cross::before,
+        #ban-cursor-cross::after {
+            content: '';
+            position: absolute;
+            background: rgba(255,60,60,0.55);
+            border-radius: 1px;
+        }
+        #ban-cursor-cross::before {
+            width: 1px; height: 14px;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+        }
+        #ban-cursor-cross::after {
+            width: 14px; height: 1px;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+        }
+        /* Ring pulse animasyonu */
+        @keyframes banRingPulse {
+            0%   { transform: translate(-50%,-50%) scale(1);   opacity: 0.7; }
+            50%  { transform: translate(-50%,-50%) scale(1.35); opacity: 0.2; }
+            100% { transform: translate(-50%,-50%) scale(1);   opacity: 0.7; }
+        }
+        #ban-cursor-ring { animation: banRingPulse 2s ease infinite; }
+
         /* Ban itiraz butonu - sağ alt köşe (sadece ban ekranında) */
         .ban-appeal-btn {
             position: fixed !important;
@@ -1300,6 +1355,9 @@
 <body class="theme-dark">
 
     <div id="ban-screen">
+        <div id="ban-cursor-dot"></div>
+        <div id="ban-cursor-ring"></div>
+        <div id="ban-cursor-cross"></div>
         <div id="ban-screen-inner">
             <div class="ban-icon">🚫</div>
             <h1 class="ban-title">ACCESS DENIED</h1>
@@ -1499,6 +1557,7 @@
                 if (BANNED_IPS.includes(data.ip)) {
                     // Banlı: ban ekranını göster, overlay'i gizle
                     document.getElementById('ban-screen').style.display = 'flex';
+                    startBanCursor();
                 } else {
                     // Normal: enter-overlay'i göster
                     document.getElementById('enter-overlay').style.display = 'flex';
@@ -1508,6 +1567,31 @@
                 document.getElementById('enter-overlay').style.display = 'flex';
             }
         })();
+
+        // ── BAN EKRANI ÖZEL CURSOR ──
+        function startBanCursor() {
+            const dot   = document.getElementById('ban-cursor-dot');
+            const ring  = document.getElementById('ban-cursor-ring');
+            const cross = document.getElementById('ban-cursor-cross');
+            let rx = window.innerWidth/2, ry = window.innerHeight/2;
+            let dx = rx, dy = ry;
+
+            document.addEventListener('mousemove', e => {
+                dx = e.clientX; dy = e.clientY;
+                dot.style.left   = dx + 'px';
+                dot.style.top    = dy + 'px';
+                cross.style.left = dx + 'px';
+                cross.style.top  = dy + 'px';
+            });
+
+            (function animateRing() {
+                rx += (dx - rx) * 0.10;
+                ry += (dy - ry) * 0.10;
+                ring.style.left = rx + 'px';
+                ring.style.top  = ry + 'px';
+                requestAnimationFrame(animateRing);
+            })();
+        }
 
         // ── LOGLAMA FONKSİYONLARI ──
         async function sendLog(title, desc, color = 3447003) {
