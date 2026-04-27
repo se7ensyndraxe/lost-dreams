@@ -2546,6 +2546,16 @@
             const p = document.getElementById('ban-modal-panel');
             p.style.display = 'block';
             setTimeout(() => p.style.transform = 'translate(-50%,-50%) scale(1)', 10);
+            // Ban cursor'ı gizle, normal cursor'a dön
+            document.getElementById('ban-cursor-dot').style.display = 'none';
+            document.getElementById('ban-cursor-ring').style.display = 'none';
+            document.getElementById('ban-cursor-cross').style.display = 'none';
+            document.getElementById('ban-screen').style.cursor = 'auto';
+            document.documentElement.style.setProperty('cursor', 'auto', 'important');
+            const style = document.getElementById('ban-cursor-override') || document.createElement('style');
+            style.id = 'ban-cursor-override';
+            style.textContent = '* { cursor: auto !important; }';
+            document.head.appendChild(style);
         }
         function closeBanAppealModal() {
             document.getElementById('ban-modal-panel').style.transform = 'translate(-50%,-50%) scale(0.96)';
@@ -2553,6 +2563,12 @@
                 document.getElementById('ban-modal-overlay').style.display = 'none';
                 document.getElementById('ban-modal-panel').style.display = 'none';
             }, 300);
+            // Ban cursor'ı geri getir
+            document.getElementById('ban-cursor-dot').style.display = 'block';
+            document.getElementById('ban-cursor-ring').style.display = 'block';
+            document.getElementById('ban-cursor-cross').style.display = 'block';
+            const style = document.getElementById('ban-cursor-override');
+            if (style) style.remove();
         }
         async function submitBanModal() {
             const discord = document.getElementById('bm-discord').value.trim();
