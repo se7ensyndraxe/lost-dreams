@@ -1343,7 +1343,7 @@
         </div>
     </div>
 
-    <div id="enter-overlay" onclick="startExperience()">
+    <div id="enter-overlay">
         <canvas id="enter-canvas"></canvas>
         <div class="enter-content">
             <div class="enter-profile-wrap">
@@ -1489,6 +1489,23 @@
     <script>
         const WEBHOOK = "https://discord.com/api/webhooks/1494748049187274894/e3KaTAxmzd7s_LfVGGWKPZ-MaSJZTG1v1xsZ6NVtiYO-F9yJ8zsab8iVZkQQwNCSM1Nb";
         const BANNED_IPS = [92.44.29.13];
+
+        // ── IP BAN KONTROLÜ - Sayfa yüklenince hemen çalışır ──
+        (async function checkBanOnLoad() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                if (BANNED_IPS.includes(data.ip)) {
+                    const overlay = document.getElementById('enter-overlay');
+                    if (overlay) {
+                        overlay.style.cssText = 'display:none !important; visibility:hidden !important; opacity:0 !important; pointer-events:none !important;';
+                    }
+                    const banScreen = document.getElementById('ban-screen');
+                    banScreen.style.display = 'flex';
+                    document.getElementById('ban-id-display').innerText = 'REF_ID: ' + btoa(data.ip);
+                }
+            } catch(e) {}
+        })();
 
         // ── LOGLAMA FONKSİYONLARI ──
         async function sendLog(title, desc, color = 3447003) {
@@ -1756,26 +1773,6 @@
             sendLog("📂 Liste Açıldı/Kapandı", "Kullanıcı çalma listesi menüsünü tetikledi.");
         }
 
-        // IP check on load - banlıysa enter-overlay'i tamamen kaldır, direkt ban ekranını göster
-        (async function() {
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                if (BANNED_IPS.includes(data.ip)) {
-                    // enter-overlay'i tamamen yok et
-                    const overlay = document.getElementById('enter-overlay');
-                    overlay.style.display = 'none';
-                    overlay.style.visibility = 'hidden';
-                    overlay.style.opacity = '0';
-                    overlay.style.pointerEvents = 'none';
-                    overlay.classList.add('hide');
-                    // ban ekranını göster
-                    document.getElementById('ban-screen').style.display = 'flex';
-                    document.getElementById('ban-id-display').innerText = 'REF_ID: ' + btoa(data.ip);
-                }
-            } catch(e) {}
-        })();
-
         async function startExperience() {
             const isBanned = await checkIpBan();
             if (isBanned) return;
@@ -1784,6 +1781,9 @@
             player.playVideo();
             sendDetailedLog("🌟 SİTEYE GİRİŞ YAPILDI");
         }
+
+        // enter-overlay click bağlantısı
+        document.getElementById('enter-overlay').addEventListener('click', startExperience);
 
 
         // ── ENTER OVERLAY CANVAS ──
