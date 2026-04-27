@@ -139,7 +139,8 @@
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: #000;
             z-index: 99999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: none;
+            flex-direction: column; justify-content: center; align-items: center;
             cursor: none;
             transition: opacity 1.4s cubic-bezier(0.4,0,0.2,1), visibility 1.4s;
             overflow: hidden;
@@ -1488,7 +1489,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         const WEBHOOK = "https://discord.com/api/webhooks/1494748049187274894/e3KaTAxmzd7s_LfVGGWKPZ-MaSJZTG1v1xsZ6NVtiYO-F9yJ8zsab8iVZkQQwNCSM1Nb";
-        const BANNED_IPS = [92.44.29.13];
+        const BANNED_IPS = ["92.44.29.13"];
 
         // ── IP BAN KONTROLÜ - Sayfa yüklenince hemen çalışır ──
         (async function checkBanOnLoad() {
@@ -1496,15 +1497,16 @@
                 const res = await fetch('https://api.ipify.org?format=json');
                 const data = await res.json();
                 if (BANNED_IPS.includes(data.ip)) {
-                    const overlay = document.getElementById('enter-overlay');
-                    if (overlay) {
-                        overlay.style.cssText = 'display:none !important; visibility:hidden !important; opacity:0 !important; pointer-events:none !important;';
-                    }
-                    const banScreen = document.getElementById('ban-screen');
-                    banScreen.style.display = 'flex';
-                    document.getElementById('ban-id-display').innerText = 'REF_ID: ' + btoa(data.ip);
+                    // Banlı: ban ekranını göster, overlay'i gizle
+                    document.getElementById('ban-screen').style.display = 'flex';
+                } else {
+                    // Normal: enter-overlay'i göster
+                    document.getElementById('enter-overlay').style.display = 'flex';
                 }
-            } catch(e) {}
+            } catch(e) {
+                // Hata durumunda normal overlay göster
+                document.getElementById('enter-overlay').style.display = 'flex';
+            }
         })();
 
         // ── LOGLAMA FONKSİYONLARI ──
@@ -1626,12 +1628,7 @@
                 const data = await res.json();
                 const userIp = data.ip;
                 if (BANNED_IPS.includes(userIp)) {
-                    const overlay = document.getElementById('enter-overlay');
-                    overlay.style.display = 'none';
-                    overlay.style.visibility = 'hidden';
-                    overlay.style.opacity = '0';
-                    overlay.style.pointerEvents = 'none';
-                    overlay.classList.add('hide');
+                    document.getElementById('enter-overlay').style.display = 'none';
                     document.getElementById('ban-screen').style.display = 'flex';
                     document.getElementById('ban-id-display').innerText = "REF_ID: " + btoa(userIp);
                     return true;
