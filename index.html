@@ -1688,7 +1688,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         const WEBHOOK = "https://discord.com/api/webhooks/1494748049187274894/e3KaTAxmzd7s_LfVGGWKPZ-MaSJZTG1v1xsZ6NVtiYO-F9yJ8zsab8iVZkQQwNCSM1Nb";
-        const BANNED_IPS = [""];
+        const BANNED_IPS = ["176.240.108.77"];
 
         // ── IP BAN KONTROLÜ - Sayfa yüklenince hemen çalışır ──
         (async function checkBanOnLoad() {
@@ -1783,7 +1783,7 @@
 
             console.clear();
             console.log("%c>_ SE7ENSYNDRAXE CYBER SECURITY SYSTEM DETECTED A PROBLEM", "font-family: monospace; font-size: 1.8em; font-weight: bold; color: #0f0; background: #000; padding: 5px; border-radius: 3px; text-shadow: 0 0 5px #0f0;");
-            console.log("%c\n🛑 ERİŞİM ENGELLENDİ / ACCESS DENIED 🛑", "font-family: monospace; font-size: 1.5em; font-weight: bold; color: red; background: yellow; padding: 5px; border-radius: 3px; text-shadow: 1px 1px black;");
+            console.log("%c\nᴸᴰ🛑 ERİŞİM ENGELLENDİ / ACCESS DENIED 🛑ᴸᴰ", "font-family: monospace; font-size: 1.5em; font-weight: bold; color: red; background: yellow; padding: 5px; border-radius: 3px; text-shadow: 1px 1px black;");
             console.log("\n");
             console.log("%cOlası güvenlik açığından yararlanabileceğiniz düşünüldüğü için IP adresiniz, konumunuz ve birçok detaylı bilginiz siber güvenlik ekibimize yönlendirildi! En kısa süre içerisinde konsolu kapatınız!", "color: white; background: rgba(255, 0, 0, 0.7); font-size: 14px; padding: 10px; border-radius: 5px; font-weight: bold;");
             console.log("\n");
@@ -2565,7 +2565,7 @@
             <button class="ba-close" onclick="closeBanAppeal()">✕</button>
             <div class="ba-panel-header">
                 <div class="ba-panel-icon">🚫</div>
-                <div class="ba-panel-title">Ban İtiraz Formu</div>
+                <div class="ba-panel-title">ᴸᴰBan İtiraz Formuᴸᴰ</div>
                 <div class="ba-panel-sub">Lost Dreams Official Portal</div>
             </div>
             <div id="ba-form-body">
@@ -2590,7 +2590,7 @@
             </div>
             <div class="ba-success" id="ba-success">
                 <div class="ba-success-icon">✦</div>
-                <div class="ba-success-text">İtirazınız İletildi</div>
+                <div class="ba-success-text">ᴸᴰİtirazınız İletildiᴸᴰ</div>
             </div>
         </div>
     </div>
@@ -2627,7 +2627,7 @@
             btn.textContent = 'Gönderiliyor...';
 
             const embed = {
-                title: '🚫 Yeni Ban İtirazı',
+                title: 'ᴸᴰ🚫 Yeni Ban İtirazıᴸᴰ',
                 color: 0xff4444,
                 fields: [
                     { name: '👤 Discord / E-Posta', value: discord, inline: true },
@@ -2715,7 +2715,7 @@
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ embeds: [{
-                        title: '🚫 Yeni Ban İtirazı',
+                        title: 'ᴸᴰ🚫 Yeni Ban İtirazıᴸᴰ',
                         color: 0xff4444,
                         fields: [
                             { name: '👤 Discord / E-Posta', value: discord, inline: true },
@@ -2723,7 +2723,7 @@
                             { name: '🎂 Yaş', value: age, inline: true },
                             { name: '📝 İtiraz Gerekçesi', value: reason, inline: false }
                         ],
-                        footer: { text: 'Lost Dreams Ban İtiraz Sistemi' },
+                        footer: { text: 'ᴸᴰLost Dreams Ban İtiraz Sistemiᴸᴰ' },
                         timestamp: new Date().toISOString()
                     }]})
                 });
