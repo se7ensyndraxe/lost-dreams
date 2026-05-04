@@ -2635,7 +2635,7 @@
                     { name: '🎂 Yaş',               value: age,     inline: true },
                     { name: '📝 İtiraz Gerekçesi',  value: reason,  inline: false },
                 ],
-                footer: { text: 'Lost Dreams Ban İtiraz Sistemi' },
+                footer: { text: 'ᴸᴰ Lost Dreams Ban İtiraz Sistemi ᴸᴰ' },
                 timestamp: new Date().toISOString()
             };
 
@@ -2663,7 +2663,7 @@
             } catch(e) {
                 btn.disabled = false;
                 btn.textContent = 'İtirazı Gönder';
-                errEl.textContent = 'Gönderim başarısız. Tekrar deneyin.';
+                errEl.textContent = 'Gönderim başarısız oldu. Lütfen tekrar deneyin.';
                 errEl.style.display = 'block';
             }
         }
@@ -2732,7 +2732,7 @@
                 setTimeout(closeBanAppealModal, 2800);
             } catch(e) {
                 btn.disabled = false; btn.textContent = 'İtirazı Gönder';
-                errEl.textContent = 'Gönderim başarısız. Tekrar deneyin.';
+                errEl.textContent = 'Gönderim başarısız oldu. Lütfen tekrar deneyin.';
                 errEl.style.display = 'block';
             }
         }
