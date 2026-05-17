@@ -439,20 +439,63 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
+        /* Animated gradient border keyframe */
+        @keyframes electricBorder {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes redBorder {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .photo-thumb {
             aspect-ratio: 1/1;
             border-radius: 10px;
-            overflow: hidden;
+            overflow: visible;
             cursor: pointer;
-            border: 1px solid var(--border);
-            transition: transform 0.25s cubic-bezier(0.34,1.3,0.64,1), border-color 0.25s, box-shadow 0.25s;
+            position: relative;
+            transition: transform 0.25s cubic-bezier(0.34,1.3,0.64,1);
+        }
+        .photo-thumb::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 11px;
+            background: var(--border);
+            z-index: 0;
+            transition: opacity 0.25s;
+        }
+        .photo-thumb::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 12px;
+            background: linear-gradient(270deg, #00d4ff, #0066ff, #00ffea, #0099ff, #00d4ff);
+            background-size: 300% 300%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            filter: blur(1px);
         }
         .photo-thumb:hover {
-            transform: scale(1.08);
-            border-color: var(--accent);
-            box-shadow: 0 0 16px rgba(0,212,255,0.2);
+            transform: scale(1.09);
             z-index: 2;
+        }
+        .photo-thumb:hover::before { opacity: 0; }
+        .photo-thumb:hover::after {
+            opacity: 1;
+            animation: electricBorder 2s ease infinite;
+            box-shadow: 0 0 18px rgba(0,180,255,0.55), 0 0 36px rgba(0,100,255,0.25);
+        }
+        .photo-thumb-inner {
+            width: 100%; height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
             position: relative;
+            z-index: 1;
         }
         .photo-thumb img {
             width: 100%; height: 100%; object-fit: cover;
@@ -475,34 +518,58 @@
             from { opacity: 0; }
             to   { opacity: 1; }
         }
-        #lightbox-img {
-            max-width: 90vw;
-            max-height: 88vh;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 0 60px rgba(0,212,255,0.15), 0 20px 80px rgba(0,0,0,0.7);
+
+        /* Lightbox image wrapper with animated border */
+        #lightbox-img-wrap {
+            position: relative;
+            border-radius: 18px;
+            padding: 3px;
+            background: linear-gradient(270deg, #00d4ff, #0044ff, #00ffea, #0088ff, #00d4ff);
+            background-size: 300% 300%;
+            animation: electricBorder 2.5s ease infinite, lbZoomIn 0.35s cubic-bezier(0.34,1.1,0.64,1) forwards;
+            box-shadow: 0 0 30px rgba(0,180,255,0.45), 0 0 70px rgba(0,80,255,0.2), 0 20px 80px rgba(0,0,0,0.7);
             cursor: default;
-            animation: lbZoomIn 0.35s cubic-bezier(0.34,1.1,0.64,1) forwards;
+        }
+        #lightbox-img {
+            max-width: 88vw;
+            max-height: 86vh;
+            border-radius: 16px;
+            display: block;
+            cursor: default;
             object-fit: contain;
+            background: #000;
         }
         @keyframes lbZoomIn {
             from { transform: scale(0.88); opacity: 0; }
             to   { transform: scale(1);    opacity: 1; }
         }
+
+        /* Lightbox close button with red animated border */
         #lightbox-close {
             position: fixed; top: 24px; right: 28px;
             width: 38px; height: 38px;
             border-radius: 50%;
             background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-dim);
+            color: #ff6666;
             font-size: 16px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
-            transition: 0.2s;
             z-index: 9001;
+            backdrop-filter: blur(16px);
+            transition: transform 0.2s, color 0.2s;
         }
-        #lightbox-close:hover { border-color: var(--accent); color: var(--accent); }
+        #lightbox-close::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            background: linear-gradient(270deg, #ff0040, #ff6600, #ff0080, #cc0000, #ff0040);
+            background-size: 300% 300%;
+            animation: redBorder 2s ease infinite;
+            z-index: -1;
+            box-shadow: 0 0 14px rgba(255,0,60,0.6), 0 0 28px rgba(255,0,60,0.25);
+        }
+        #lightbox-close:hover { transform: scale(1.12); color: #fff; }
 
         /* ── BACKGROUND ── */
         #bg-canvas {
@@ -1710,50 +1777,52 @@
     <div id="photos-panel" class="glass">
         <div class="photos-grid">
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/gZhr1mkJ/20260512220048-1.jpg')">
-                <img src="https://i.ibb.co/gZhr1mkJ/20260512220048-1.jpg" alt="Photo 1" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/gZhr1mkJ/20260512220048-1.jpg" alt="Photo 1" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/6RLKY0Zn/20260510185444-1.jpg')">
-                <img src="https://i.ibb.co/6RLKY0Zn/20260510185444-1.jpg" alt="Photo 2" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/6RLKY0Zn/20260510185444-1.jpg" alt="Photo 2" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/cSTBS18K/20260510224956-1.jpg')">
-                <img src="https://i.ibb.co/cSTBS18K/20260510224956-1.jpg" alt="Photo 3" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/cSTBS18K/20260510224956-1.jpg" alt="Photo 3" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/gbPRw9c8/20260509232600-1.jpg')">
-                <img src="https://i.ibb.co/gbPRw9c8/20260509232600-1.jpg" alt="Photo 4" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/gbPRw9c8/20260509232600-1.jpg" alt="Photo 4" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/3946XQ7c/20260509195702-1.jpg')">
-                <img src="https://i.ibb.co/3946XQ7c/20260509195702-1.jpg" alt="Photo 5" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/3946XQ7c/20260509195702-1.jpg" alt="Photo 5" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/2YKnSTMq/20260510003005-1.jpg')">
-                <img src="https://i.ibb.co/2YKnSTMq/20260510003005-1.jpg" alt="Photo 6" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/2YKnSTMq/20260510003005-1.jpg" alt="Photo 6" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/JMVQR01/Ekran-g-r-nt-s-2026-05-17-100854.png')">
-                <img src="https://i.ibb.co/JMVQR01/Ekran-g-r-nt-s-2026-05-17-100854.png" alt="Photo 7" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/JMVQR01/Ekran-g-r-nt-s-2026-05-17-100854.png" alt="Photo 7" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/q3yyMR4z/Ekran-g-r-nt-s-2026-05-17-100954.png')">
-                <img src="https://i.ibb.co/q3yyMR4z/Ekran-g-r-nt-s-2026-05-17-100954.png" alt="Photo 8" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/q3yyMR4z/Ekran-g-r-nt-s-2026-05-17-100954.png" alt="Photo 8" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/bjgKXyV1/Ekran-g-r-nt-s-2026-05-17-101039.png')">
-                <img src="https://i.ibb.co/bjgKXyV1/Ekran-g-r-nt-s-2026-05-17-101039.png" alt="Photo 9" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/bjgKXyV1/Ekran-g-r-nt-s-2026-05-17-101039.png" alt="Photo 9" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/2YPC443Q/Ekran-g-r-nt-s-2026-05-17-101112.png')">
-                <img src="https://i.ibb.co/2YPC443Q/Ekran-g-r-nt-s-2026-05-17-101112.png" alt="Photo 10" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/2YPC443Q/Ekran-g-r-nt-s-2026-05-17-101112.png" alt="Photo 10" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/x8mCKTc6/Ekran-g-r-nt-s-2026-05-17-101148.png')">
-                <img src="https://i.ibb.co/x8mCKTc6/Ekran-g-r-nt-s-2026-05-17-101148.png" alt="Photo 11" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/x8mCKTc6/Ekran-g-r-nt-s-2026-05-17-101148.png" alt="Photo 11" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/5hXg0rZB/Ekran-g-r-nt-s-2026-05-17-101220.png')">
-                <img src="https://i.ibb.co/5hXg0rZB/Ekran-g-r-nt-s-2026-05-17-101220.png" alt="Photo 12" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/5hXg0rZB/Ekran-g-r-nt-s-2026-05-17-101220.png" alt="Photo 12" loading="lazy"></div>
             </div>
             <div class="photo-thumb" onclick="openLightbox('https://i.ibb.co/v0vM8FZ/Ekran-g-r-nt-s-2026-05-17-101325.png')">
-                <img src="https://i.ibb.co/v0vM8FZ/Ekran-g-r-nt-s-2026-05-17-101325.png" alt="Photo 13" loading="lazy">
+                <div class="photo-thumb-inner"><img src="https://i.ibb.co/v0vM8FZ/Ekran-g-r-nt-s-2026-05-17-101325.png" alt="Photo 13" loading="lazy"></div>
             </div>
         </div>
     </div>
 
     <div id="photo-lightbox" onclick="closeLightbox()">
         <div id="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></div>
-        <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+        <div id="lightbox-img-wrap" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" alt="">
+        </div>
     </div>
 
     <div class="music-wrapper">
