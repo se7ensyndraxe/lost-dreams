@@ -641,22 +641,7 @@
         #lightbox-close:hover { transform: scale(1.12); }
         #lightbox-close:hover i { color: #fff; }
 
-        /* ── NAVIGATE EXIT ANIMATION ── */
-        @keyframes fallDown {
-            0%   { transform: translateY(0px)   rotate(0deg);    opacity: 1;  filter: blur(0px); }
-            30%  { transform: translateY(22px)  rotate(-2deg);   opacity: 0.8; filter: blur(0px); }
-            100% { transform: translateY(200px) rotate(-4deg);   opacity: 0;  filter: blur(5px); }
-        }
-        @keyframes fallDownRight {
-            0%   { transform: translateY(0px)   rotate(0deg);   opacity: 1;  filter: blur(0px); }
-            30%  { transform: translateY(22px)  rotate(2deg);   opacity: 0.8; filter: blur(0px); }
-            100% { transform: translateY(200px) rotate(4deg);   opacity: 0;  filter: blur(5px); }
-        }
-        @keyframes fallDownCenter {
-            0%   { transform: translateY(0px)   scale(1);    opacity: 1;  filter: blur(0px); }
-            30%  { transform: translateY(16px)  scale(0.99); opacity: 0.8; filter: blur(0px); }
-            100% { transform: translateY(220px) scale(0.92); opacity: 0;  filter: blur(7px); }
-        }
+        /* ── NAVIGATE EXIT ANIMATION ── (wave handled via canvas in JS) ── */
         #bg-canvas {
             position:fixed; top:0; left:0; width:100%; height:100%;
             z-index:1; pointer-events:none;
@@ -2276,59 +2261,132 @@
             });
         })();
 
-        /* ── NAVIGATE WITH EXIT ANIMATION ── */
+        /* ── NAVIGATE WITH WAVE ANIMATION ── */
         function navigateWithAnimation(e, url) {
             e.preventDefault();
 
-            // Whoosh / scroll sound
+            // Wave whoosh sound
             (function() {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 if (!AudioCtx) return;
                 const ctx = new AudioCtx();
-                const dur = 1.2;
+                const dur = 1.6;
                 const bufLen = ctx.sampleRate * dur;
                 const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
                 const data = buf.getChannelData(0);
                 for (let i = 0; i < bufLen; i++) {
-                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.38));
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.3));
                 }
                 const noise = ctx.createBufferSource();
                 noise.buffer = buf;
-                const filter = ctx.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.setValueAtTime(900, ctx.currentTime);
-                filter.frequency.linearRampToValueAtTime(80, ctx.currentTime + dur);
-                filter.Q.value = 0.6;
+
+                const lpf = ctx.createBiquadFilter();
+                lpf.type = 'lowpass';
+                lpf.frequency.setValueAtTime(1800, ctx.currentTime);
+                lpf.frequency.linearRampToValueAtTime(180, ctx.currentTime + dur);
+
                 const gain = ctx.createGain();
-                gain.gain.setValueAtTime(0.0, ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.6, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.1);
                 gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(ctx.destination);
-                noise.start();
-                noise.stop(ctx.currentTime + dur);
+
+                noise.connect(lpf); lpf.connect(gain); gain.connect(ctx.destination);
+                noise.start(); noise.stop(ctx.currentTime + dur);
             })();
 
-            // Elements and their animations
-            const targets = [
-                { el: document.querySelector('.music-wrapper'),    anim: 'fallDown',       delay: 0   },
-                { el: document.getElementById('theme-toggle'),     anim: 'fallDownRight',  delay: 80  },
-                { el: document.getElementById('photos-btn-wrap'),  anim: 'fallDownRight',  delay: 160 },
-                { el: document.querySelector('.container'),        anim: 'fallDownCenter', delay: 40  },
-            ];
+            // Canvas wave
+            const canvas = document.createElement('canvas');
+            canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;pointer-events:none;';
+            canvas.width  = window.innerWidth;
+            canvas.height = window.innerHeight;
+            document.body.appendChild(canvas);
 
-            targets.forEach(({ el, anim, delay }) => {
-                if (!el) return;
-                setTimeout(() => {
-                    el.style.transition = 'none';
-                    el.style.animation  = `${anim} 2s cubic-bezier(0.4,0,1,1) forwards`;
-                    el.style.pointerEvents = 'none';
-                }, delay);
-            });
+            const cx   = canvas.getContext('2d');
+            const W    = canvas.width;
+            const H    = canvas.height;
+            const waveH = H * 0.375;           // ekranın 4'te 1.5'u
+            const centerY = H * 0.5;
+            const topY    = centerY - waveH / 2;
+            const botY    = centerY + waveH / 2;
+            const AMP     = 52;                // dalga genliği
+            const FREQ    = 3;                 // dalga frekansı
 
-            // Navigate after animation
-            setTimeout(() => { window.open(url, '_blank'); }, 2100);
+            const totalDuration = 2000;        // 2 saniye
+            let startTime = null;
+
+            function easeInOut(t) {
+                return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            }
+
+            function drawFrame(ts) {
+                if (!startTime) startTime = ts;
+                const raw  = Math.min((ts - startTime) / totalDuration, 1);
+                const prog = easeInOut(raw);
+
+                // Dalga cephesi X konumu: -AMP'dan W+AMP'a kadar
+                const frontX = -AMP + prog * (W + AMP * 2 + 120);
+
+                cx.clearRect(0, 0, W, H);
+
+                // Glow efekti (leading edge etrafında)
+                const glowGrad = cx.createRadialGradient(frontX, centerY, 0, frontX, centerY, waveH * 0.7);
+                glowGrad.addColorStop(0, 'rgba(0,220,255,0.18)');
+                glowGrad.addColorStop(1, 'rgba(0,80,255,0)');
+                cx.fillStyle = glowGrad;
+                cx.fillRect(0, 0, W, H);
+
+                // Ana dalga gövdesi
+                cx.beginPath();
+                cx.moveTo(0, topY);
+
+                // Üst kenar (düz sol → dalgalı sağ)
+                for (let x = 0; x <= frontX + AMP + 10; x += 4) {
+                    const distFromFront = frontX - x;
+                    const sineVal = Math.sin((x / W) * Math.PI * FREQ * 2 - prog * Math.PI * 5) * AMP;
+                    const fade    = Math.max(0, Math.min(1, distFromFront / (AMP * 2)));
+                    cx.lineTo(x, topY + sineVal * (1 - fade));
+                }
+
+                // Sağ kapanış
+                cx.lineTo(frontX + AMP + 10, botY);
+
+                // Alt kenar (sağdan sola düz)
+                cx.lineTo(0, botY);
+                cx.closePath();
+
+                // Dikey gradient: üstte açık cyan, altta koyu lacivert
+                const grad = cx.createLinearGradient(0, topY, 0, botY);
+                grad.addColorStop(0,    'rgba(0, 230, 255, 0.92)');
+                grad.addColorStop(0.28, 'rgba(0, 160, 240, 0.88)');
+                grad.addColorStop(0.62, 'rgba(0,  80, 200, 0.88)');
+                grad.addColorStop(1,    'rgba(0,  12,  70, 0.93)');
+                cx.fillStyle = grad;
+                cx.fill();
+
+                // Leading edge parlaklığı (crest çizgisi)
+                cx.beginPath();
+                for (let x = 0; x <= frontX + AMP + 10; x += 4) {
+                    const distFromFront = frontX - x;
+                    const sineVal = Math.sin((x / W) * Math.PI * FREQ * 2 - prog * Math.PI * 5) * AMP;
+                    const fade    = Math.max(0, Math.min(1, distFromFront / (AMP * 2)));
+                    const brightness = Math.pow(1 - fade, 3);
+                    if (x === 0) cx.moveTo(x, topY + sineVal * (1 - fade));
+                    else         cx.lineTo(x, topY + sineVal * (1 - fade));
+                }
+                cx.strokeStyle = `rgba(160, 240, 255, 0.7)`;
+                cx.lineWidth   = 2.5;
+                cx.stroke();
+
+                if (raw < 1) {
+                    requestAnimationFrame(drawFrame);
+                } else {
+                    cx.clearRect(0, 0, W, H);
+                    canvas.remove();
+                    window.open(url, '_blank');
+                }
+            }
+
+            requestAnimationFrame(drawFrame);
         }
 
         const playlist = [
