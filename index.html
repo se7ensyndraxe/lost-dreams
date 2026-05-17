@@ -641,7 +641,25 @@
         #lightbox-close:hover { transform: scale(1.12); }
         #lightbox-close:hover i { color: #fff; }
 
-        /* ── BACKGROUND ── */
+        /* ── NAVIGATE EXIT ANIMATION ── */
+        @keyframes fallDown {
+            0%   { transform: translateY(0)   rotate(0deg);   opacity: 1;   filter: blur(0px); }
+            35%  { transform: translateY(18px) rotate(-1.5deg); opacity: 0.85; filter: blur(0px); }
+            100% { transform: translateY(140px) rotate(-3deg); opacity: 0;   filter: blur(4px); }
+        }
+        @keyframes fallDownRight {
+            0%   { transform: translateY(0)   rotate(0deg);   opacity: 1;   filter: blur(0px); }
+            35%  { transform: translateY(18px) rotate(1.5deg); opacity: 0.85; filter: blur(0px); }
+            100% { transform: translateY(140px) rotate(3deg);  opacity: 0;   filter: blur(4px); }
+        }
+        @keyframes fallDownCenter {
+            0%   { transform: translateY(0)   scale(1)    opacity: 1;   filter: blur(0px); }
+            30%  { transform: translateY(12px) scale(0.99); opacity: 0.9;  filter: blur(0px); }
+            100% { transform: translateY(180px) scale(0.93); opacity: 0;   filter: blur(6px); }
+        }
+        .exit-fall-left  { animation: fallDown       1.4s cubic-bezier(0.4,0,1,1) forwards !important; }
+        .exit-fall-right { animation: fallDownRight  1.4s cubic-bezier(0.4,0,1,1) forwards !important; }
+        .exit-fall-center{ animation: fallDownCenter 1.5s cubic-bezier(0.4,0,1,1) forwards !important; pointer-events:none; }
         #bg-canvas {
             position:fixed; top:0; left:0; width:100%; height:100%;
             z-index:1; pointer-events:none;
@@ -1937,7 +1955,8 @@
         </div>
         <div class="buttons-block">
             <a href="https://steamcommunity.com/groups/LDLOSTDREAMSLD"
-               target="_blank" class="liq-btn" id="steam-btn">
+               class="liq-btn" id="steam-btn"
+               onclick="navigateWithAnimation(event,'https://steamcommunity.com/groups/LDLOSTDREAMSLD')">
                 <div class="btn-left">
                     <div class="btn-icon"><i class="fa-brands fa-steam"></i></div>
                     <div class="btn-texts">
@@ -1948,7 +1967,8 @@
                 <i class="fa-solid fa-arrow-right btn-arrow"></i>
             </a>
             <a href="https://www.instagram.com/ghost53_53"
-               target="_blank" class="liq-btn" id="insta-btn">
+               class="liq-btn" id="insta-btn"
+               onclick="navigateWithAnimation(event,'https://www.instagram.com/ghost53_53')">
                 <div class="btn-left">
                     <div class="btn-icon"><i class="fa-brands fa-instagram"></i></div>
                     <div class="btn-texts">
@@ -1961,7 +1981,8 @@
         </div>
         <div class="join-block">
             <a href="https://discord.gg/JJsEbmGyFX"
-               target="_blank" class="join-btn" id="discord-btn">
+               class="join-btn" id="discord-btn"
+               onclick="navigateWithAnimation(event,'https://discord.gg/JJsEbmGyFX')">
                 <div class="btn-particles">
                     <span></span><span></span><span></span>
                     <span></span><span></span><span></span>
@@ -2257,6 +2278,67 @@
                 if (e.button === 0) playTick();
             });
         })();
+
+        /* ── NAVIGATE WITH EXIT ANIMATION ── */
+        function navigateWithAnimation(e, url) {
+            e.preventDefault();
+
+            // Whoosh / scroll sound
+            (function() {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const dur = 0.65;
+
+                // Low whoosh
+                const bufLen = ctx.sampleRate * dur;
+                const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+                const data = buf.getChannelData(0);
+                for (let i = 0; i < bufLen; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.38));
+                }
+                const noise = ctx.createBufferSource();
+                noise.buffer = buf;
+
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(800, ctx.currentTime);
+                filter.frequency.linearRampToValueAtTime(120, ctx.currentTime + dur);
+                filter.Q.value = 0.7;
+
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(0.0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.06);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+                noise.start();
+                noise.stop(ctx.currentTime + dur);
+            })();
+
+            // Elements to animate
+            const leftEl   = document.querySelector('.music-wrapper');
+            const rightEl  = document.getElementById('theme-toggle');
+            const right2El = document.getElementById('photos-btn-wrap');
+            const centerEl = document.querySelector('.container');
+
+            const delays = [
+                [leftEl,   'exit-fall-left',   0],
+                [rightEl,  'exit-fall-right',  60],
+                [right2El, 'exit-fall-right',  120],
+                [centerEl, 'exit-fall-center', 30],
+            ];
+
+            delays.forEach(([el, cls, delay]) => {
+                if (!el) return;
+                setTimeout(() => el.classList.add(cls), delay);
+            });
+
+            // Navigate after animation
+            setTimeout(() => { window.open(url, '_blank'); }, 1800);
+        }
 
         const playlist = [
             { id:'8q9Kz1FFDaM', name:'MILIARDARA' },
