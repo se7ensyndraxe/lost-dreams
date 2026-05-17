@@ -439,69 +439,92 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
-        /* Animated gradient border keyframe */
-        @keyframes electricBorder {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+
+        /* ── CONTINUOUS ROTATING GRADIENT KEYFRAMES ── */
+        @keyframes spinGradient {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
         }
-        @keyframes redBorder {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        @keyframes spinGradientRed {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        @keyframes glowPulse {
+            0%, 100% {
+                box-shadow:
+                    0 0 8px  rgba(0,200,255,0.7),
+                    0 0 20px rgba(0,120,255,0.4),
+                    0 0 42px rgba(0,80,255,0.2),
+                    0 0 70px rgba(0,60,255,0.08);
+            }
+            50% {
+                box-shadow:
+                    0 0 14px rgba(0,240,255,1),
+                    0 0 32px rgba(0,160,255,0.65),
+                    0 0 60px rgba(0,100,255,0.35),
+                    0 0 100px rgba(0,80,255,0.15);
+            }
+        }
+        @keyframes lbFadeIn  { from { opacity:0; } to { opacity:1; } }
+        @keyframes lbZoomIn  {
+            from { transform: scale(0.88); opacity: 0; }
+            to   { transform: scale(1);    opacity: 1; }
         }
 
+        /* ── PHOTO THUMB ── */
         .photo-thumb {
             aspect-ratio: 1/1;
-            border-radius: 10px;
-            overflow: visible;
+            border-radius: 12px;
+            overflow: hidden;       /* clips the spinning pseudo-el */
             cursor: pointer;
             position: relative;
-            transition: transform 0.25s cubic-bezier(0.34,1.3,0.64,1);
+            transition: transform 0.28s cubic-bezier(0.34,1.3,0.64,1);
         }
+
+        /* Rotating conic gradient layer — hidden by default */
         .photo-thumb::before {
             content: '';
             position: absolute;
-            inset: -1px;
-            border-radius: 11px;
-            background: var(--border);
-            z-index: 0;
-            transition: opacity 0.25s;
-        }
-        .photo-thumb::after {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border-radius: 12px;
-            background: linear-gradient(270deg, #00d4ff, #0066ff, #00ffea, #0099ff, #00d4ff);
-            background-size: 300% 300%;
-            z-index: -1;
+            width: 160%; height: 160%;
+            top: -30%; left: -30%;
+            background: conic-gradient(
+                from 0deg,
+                #00d4ff 0deg,
+                #0055ff 60deg,
+                #00eeff 120deg,
+                #0099ff 180deg,
+                #00ffff 240deg,
+                #0044cc 300deg,
+                #00d4ff 360deg
+            );
+            animation: spinGradient 3s linear infinite;
             opacity: 0;
-            transition: opacity 0.3s;
-            filter: blur(1px);
+            transition: opacity 0.35s;
+            z-index: 0;
         }
-        .photo-thumb:hover {
-            transform: scale(1.09);
-            z-index: 2;
-        }
-        .photo-thumb:hover::before { opacity: 0; }
-        .photo-thumb:hover::after {
-            opacity: 1;
-            animation: electricBorder 2s ease infinite;
-            box-shadow: 0 0 18px rgba(0,180,255,0.55), 0 0 36px rgba(0,100,255,0.25);
-        }
+
+        /* Solid inner block — creates the "border" gap */
         .photo-thumb-inner {
-            width: 100%; height: 100%;
+            position: absolute;
+            inset: 2px;
             border-radius: 10px;
             overflow: hidden;
-            position: relative;
             z-index: 1;
+            background: #060c18;
         }
+
         .photo-thumb img {
             width: 100%; height: 100%; object-fit: cover;
             display: block;
             pointer-events: none;
         }
+
+        .photo-thumb:hover {
+            transform: scale(1.09);
+            z-index: 2;
+            animation: glowPulse 1.6s ease infinite;
+        }
+        .photo-thumb:hover::before { opacity: 1; }
 
         /* ── PHOTO LIGHTBOX ── */
         #photo-lightbox {
@@ -514,62 +537,104 @@
             cursor: pointer;
         }
         #photo-lightbox.open { display: flex; animation: lbFadeIn 0.3s ease forwards; }
-        @keyframes lbFadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
 
-        /* Lightbox image wrapper with animated border */
+        /* Lightbox image wrapper — spinning electric border */
         #lightbox-img-wrap {
             position: relative;
             border-radius: 18px;
-            padding: 3px;
-            background: linear-gradient(270deg, #00d4ff, #0044ff, #00ffea, #0088ff, #00d4ff);
-            background-size: 300% 300%;
-            animation: electricBorder 2.5s ease infinite, lbZoomIn 0.35s cubic-bezier(0.34,1.1,0.64,1) forwards;
-            box-shadow: 0 0 30px rgba(0,180,255,0.45), 0 0 70px rgba(0,80,255,0.2), 0 20px 80px rgba(0,0,0,0.7);
+            overflow: hidden;
             cursor: default;
+            animation: lbZoomIn 0.35s cubic-bezier(0.34,1.1,0.64,1) forwards,
+                       glowPulse 2s ease infinite;
+            padding: 3px;
+            background: #000;
         }
+
+        /* Spinning gradient behind the image */
+        #lightbox-img-wrap::before {
+            content: '';
+            position: absolute;
+            width: 160%; height: 160%;
+            top: -30%; left: -30%;
+            background: conic-gradient(
+                from 0deg,
+                #00d4ff 0deg,
+                #0055ff 60deg,
+                #00eeff 120deg,
+                #0099ff 180deg,
+                #00ffff 240deg,
+                #0044cc 300deg,
+                #00d4ff 360deg
+            );
+            animation: spinGradient 3s linear infinite;
+            z-index: 0;
+        }
+
         #lightbox-img {
+            position: relative;
+            z-index: 1;
             max-width: 88vw;
             max-height: 86vh;
-            border-radius: 16px;
+            border-radius: 15px;
             display: block;
             cursor: default;
             object-fit: contain;
             background: #000;
         }
-        @keyframes lbZoomIn {
-            from { transform: scale(0.88); opacity: 0; }
-            to   { transform: scale(1);    opacity: 1; }
-        }
 
-        /* Lightbox close button with red animated border */
+        /* ── CLOSE BUTTON — only border has red spin, inside solid ── */
         #lightbox-close {
             position: fixed; top: 24px; right: 28px;
             width: 38px; height: 38px;
             border-radius: 50%;
-            background: var(--surface);
-            color: #ff6666;
-            font-size: 16px;
+            overflow: hidden;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             z-index: 9001;
-            backdrop-filter: blur(16px);
-            transition: transform 0.2s, color 0.2s;
+            transition: transform 0.2s;
         }
+
+        /* Spinning red gradient — fills the circle */
         #lightbox-close::before {
             content: '';
             position: absolute;
-            inset: -2px;
-            border-radius: 50%;
-            background: linear-gradient(270deg, #ff0040, #ff6600, #ff0080, #cc0000, #ff0040);
-            background-size: 300% 300%;
-            animation: redBorder 2s ease infinite;
-            z-index: -1;
-            box-shadow: 0 0 14px rgba(255,0,60,0.6), 0 0 28px rgba(255,0,60,0.25);
+            width: 160%; height: 160%;
+            top: -30%; left: -30%;
+            background: conic-gradient(
+                from 0deg,
+                #ff0040 0deg,
+                #ff6600 72deg,
+                #ff0080 144deg,
+                #cc0020 216deg,
+                #ff3300 288deg,
+                #ff0040 360deg
+            );
+            animation: spinGradientRed 2s linear infinite;
+            z-index: 0;
+            box-shadow: 0 0 16px rgba(255,0,60,0.7), 0 0 32px rgba(255,0,60,0.3);
         }
-        #lightbox-close:hover { transform: scale(1.12); color: #fff; }
+
+        /* Solid inner circle — creates the border-only effect */
+        #lightbox-close::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border-radius: 50%;
+            background: rgba(8,14,26,0.92);
+            backdrop-filter: blur(16px);
+            z-index: 1;
+        }
+
+        /* Icon on top */
+        #lightbox-close i {
+            position: relative;
+            z-index: 2;
+            color: #ff6666;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        #lightbox-close:hover { transform: scale(1.12); }
+        #lightbox-close:hover i { color: #fff; }
 
         /* ── BACKGROUND ── */
         #bg-canvas {
