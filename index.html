@@ -470,6 +470,11 @@
             from { transform: scale(0.88); opacity: 0; }
             to   { transform: scale(1);    opacity: 1; }
         }
+        @keyframes lbSlideOut {
+            0%   { transform: scale(1) rotate(0deg) translateY(0);   opacity: 1; }
+            30%  { transform: scale(0.97) rotate(3deg) translateY(10px);  opacity: 0.9; }
+            100% { transform: scale(0.85) rotate(6deg) translateY(120px); opacity: 0; }
+        }
 
         /* ── PHOTO THUMB ── */
         .photo-thumb {
@@ -2198,23 +2203,60 @@
         }
 
         function openLightbox(src) {
-            const lb = document.getElementById('photo-lightbox');
+            const lb  = document.getElementById('photo-lightbox');
+            const wrap = document.getElementById('lightbox-img-wrap');
             const img = document.getElementById('lightbox-img');
             img.src = src;
+            wrap.style.animation = 'lbZoomIn 0.35s cubic-bezier(0.34,1.1,0.64,1) forwards, glowPulse 2s ease infinite';
             lb.classList.add('open');
             document.body.style.overflow = 'hidden';
         }
 
         function closeLightbox() {
-            const lb = document.getElementById('photo-lightbox');
-            lb.classList.remove('open');
-            document.body.style.overflow = '';
-            setTimeout(() => { document.getElementById('lightbox-img').src = ''; }, 300);
+            const lb   = document.getElementById('photo-lightbox');
+            const wrap = document.getElementById('lightbox-img-wrap');
+            if (!lb.classList.contains('open')) return;
+            wrap.style.animation = 'lbSlideOut 0.42s cubic-bezier(0.4,0,1,1) forwards';
+            setTimeout(() => {
+                lb.classList.remove('open');
+                document.body.style.overflow = '';
+                setTimeout(() => { document.getElementById('lightbox-img').src = ''; }, 50);
+            }, 400);
         }
 
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeLightbox();
         });
+
+        /* ── TIK CLICK SOUND ── */
+        (function() {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            let ctx = null;
+
+            function playTick() {
+                if (!ctx) ctx = new AudioCtx();
+                const buf = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
+                const data = buf.getChannelData(0);
+                for (let i = 0; i < data.length; i++) {
+                    const t = i / ctx.sampleRate;
+                    data[i] = Math.exp(-t * 280) * (Math.random() * 2 - 1) * 0.55
+                             + Math.exp(-t * 600) * Math.sin(2 * Math.PI * 1800 * t) * 0.35;
+                }
+                const src = ctx.createBufferSource();
+                src.buffer = buf;
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+                src.connect(gain);
+                gain.connect(ctx.destination);
+                src.start();
+            }
+
+            document.addEventListener('mousedown', e => {
+                if (e.button === 0) playTick();
+            });
+        })();
 
         const playlist = [
             { id:'8q9Kz1FFDaM', name:'MILIARDARA' },
