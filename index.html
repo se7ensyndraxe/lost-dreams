@@ -1942,6 +1942,10 @@
             border-color: var(--gold);
             transform: translateY(-4px);
         }
+        #games-page .game-card:focus-visible {
+            outline: 2px solid var(--gold-light);
+            outline-offset: 4px;
+        }
         #games-page .card-top-bar {
             height: 3px;
             background: linear-gradient(to right, var(--gold-dark), var(--gold), var(--gold-dark));
@@ -3513,35 +3517,40 @@
     </script>
     <script>
         const steamGameLogo = id => `https://cdn.cloudflare.steamstatic.com/steam/apps/${id}/header.jpg`;
+        const steamStoreUrl = id => `https://store.steampowered.com/app/${id}/`;
         const LOST_DREAMS_GAMES = [
-            { name: "BeamNG.drive", logo: steamGameLogo(284160), tags: ["Simülasyon", "Açık Dünya", "Sürüş"] },
-            { name: "Euro Truck Simulator 2", logo: steamGameLogo(227300), tags: ["Simülasyon", "Sürüş", "Çok Oyunculu"] },
-            { name: "PUBG: Battlegrounds", logo: steamGameLogo(578080), tags: ["Battle Royale", "Atıcılık", "Hayatta Kalma"] },
-            { name: "The Forest", logo: steamGameLogo(242760), tags: ["Hayatta Kalma", "Korku", "Açık Dünya"] },
-            { name: "Unturned", logo: steamGameLogo(304930), tags: ["Hayatta Kalma", "Sandbox", "Zombie"] },
-            { name: "Counter-Strike 2", logo: steamGameLogo(730), tags: ["FPS", "Rekabetçi", "Taktik"] },
-            { name: "Dying Light", logo: steamGameLogo(239140), tags: ["Aksiyon", "Parkour", "Zombie"] },
-            { name: "Grand Theft Auto V", logo: steamGameLogo(271590), tags: ["Açık Dünya", "Aksiyon", "FiveM"] },
-            { name: "Cyberpunk 2077", logo: steamGameLogo(1091500), tags: ["RPG", "Açık Dünya", "Aksiyon"] },
-            { name: "Sea of Thieves", logo: steamGameLogo(1172620), tags: ["Macera", "Çok Oyunculu", "Açık Dünya"] },
-            { name: "Battlefield 1", logo: steamGameLogo(1238840), tags: ["FPS", "Savaş", "Çok Oyunculu"] },
-            { name: "Left 4 Dead 2", logo: steamGameLogo(550), tags: ["Co-op", "Aksiyon", "Zombie"] },
-            { name: "Escape The Backrooms", logo: steamGameLogo(1943950), tags: ["Korku", "Hayatta Kalma", "Co-op"] },
-            { name: "Ranch Simulator", logo: steamGameLogo(1119730), tags: ["Simülasyon", "Çiftlik", "Açık Dünya"] },
-            { name: "Dying Light 2: Stay Human", logo: steamGameLogo(534380), tags: ["Aksiyon", "Parkour", "RPG"] },
-            { name: "Sons Of The Forest", logo: steamGameLogo(1326470), tags: ["Hayatta Kalma", "Korku", "Co-op"] },
-            { name: "Dying Light: The Beast", logo: steamGameLogo(3008130), tags: ["Aksiyon", "Parkour", "Hayatta Kalma"] },
-            { name: "Dying Light", logo: steamGameLogo(239140), tags: ["Aksiyon", "Parkour", "Zombie"] },
-            { name: "Back 4 Blood", logo: steamGameLogo(924970), tags: ["Co-op", "FPS", "Zombie"] },
-            { name: "Gang Beasts", logo: steamGameLogo(285900), tags: ["Dövüş", "Parti", "Co-op"] },
-            { name: "Assetto Corsa", logo: steamGameLogo(244210), tags: ["Yarış", "Simülasyon", "Sürüş"] },
-            { name: "Zero Hour", logo: steamGameLogo(1359090), tags: ["Taktik", "FPS", "Takım"] },
-            { name: "The Crew 2", logo: steamGameLogo(646910), tags: ["Yarış", "Açık Dünya", "Çok Oyunculu"] },
-            { name: "Deceit", logo: steamGameLogo(466240), tags: ["Çıkarım", "Çok Oyunculu", "Aksiyon"] },
+            { name: "BeamNG.drive", logo: steamGameLogo(284160), url: steamStoreUrl(284160), tags: ["Simülasyon", "Açık Dünya", "Sürüş"] },
+            { name: "Euro Truck Simulator 2", logo: steamGameLogo(227300), url: steamStoreUrl(227300), tags: ["Simülasyon", "Sürüş", "Çok Oyunculu"] },
+            { name: "PUBG: Battlegrounds", logo: steamGameLogo(578080), url: steamStoreUrl(578080), tags: ["Battle Royale", "Atıcılık", "Hayatta Kalma"] },
+            { name: "The Forest", logo: steamGameLogo(242760), url: steamStoreUrl(242760), tags: ["Hayatta Kalma", "Korku", "Açık Dünya"] },
+            { name: "Unturned", logo: steamGameLogo(304930), url: steamStoreUrl(304930), tags: ["Hayatta Kalma", "Sandbox", "Zombie"] },
+            { name: "Counter-Strike 2", logo: steamGameLogo(730), url: steamStoreUrl(730), tags: ["FPS", "Rekabetçi", "Taktik"] },
+            { name: "FiveM", logo: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_fivem.svg", url: "https://fivem.net/", tags: ["Roleplay", "GTA V", "Çok Oyunculu"] },
+            { name: "Grand Theft Auto V", logo: steamGameLogo(271590), url: steamStoreUrl(271590), tags: ["Açık Dünya", "Aksiyon", "FiveM"] },
+            { name: "Dying Light", logo: steamGameLogo(239140), url: steamStoreUrl(239140), tags: ["Aksiyon", "Parkour", "Zombie"] },
+            { name: "Cyberpunk 2077", logo: steamGameLogo(1091500), url: steamStoreUrl(1091500), tags: ["RPG", "Açık Dünya", "Aksiyon"] },
+            { name: "Sea of Thieves", logo: steamGameLogo(1172620), url: steamStoreUrl(1172620), tags: ["Macera", "Çok Oyunculu", "Açık Dünya"] },
+            { name: "Battlefield 1", logo: steamGameLogo(1238840), url: steamStoreUrl(1238840), tags: ["FPS", "Savaş", "Çok Oyunculu"] },
+            { name: "Left 4 Dead 2", logo: steamGameLogo(550), url: steamStoreUrl(550), tags: ["Co-op", "Aksiyon", "Zombie"] },
+            { name: "Escape The Backrooms", logo: steamGameLogo(1943950), url: steamStoreUrl(1943950), tags: ["Korku", "Hayatta Kalma", "Co-op"] },
+            { name: "Ranch Simulator", logo: steamGameLogo(1119730), url: steamStoreUrl(1119730), tags: ["Simülasyon", "Çiftlik", "Açık Dünya"] },
+            { name: "Dying Light 2: Stay Human", logo: steamGameLogo(534380), url: steamStoreUrl(534380), tags: ["Aksiyon", "Parkour", "RPG"] },
+            { name: "Sons Of The Forest", logo: steamGameLogo(1326470), url: steamStoreUrl(1326470), tags: ["Hayatta Kalma", "Korku", "Co-op"] },
+            { name: "Dying Light: The Beast", logo: steamGameLogo(3008130), url: steamStoreUrl(3008130), tags: ["Aksiyon", "Parkour", "Hayatta Kalma"] },
+            { name: "Back 4 Blood", logo: steamGameLogo(924970), url: steamStoreUrl(924970), tags: ["Co-op", "FPS", "Zombie"] },
+            { name: "Gang Beasts", logo: steamGameLogo(285900), url: steamStoreUrl(285900), tags: ["Dövüş", "Parti", "Co-op"] },
+            { name: "Assetto Corsa", logo: steamGameLogo(244210), url: steamStoreUrl(244210), tags: ["Yarış", "Simülasyon", "Sürüş"] },
+            { name: "Zero Hour", logo: steamGameLogo(1359090), url: steamStoreUrl(1359090), tags: ["Taktik", "FPS", "Takım"] },
+            { name: "The Crew 2", logo: steamGameLogo(646910), url: steamStoreUrl(646910), tags: ["Yarış", "Açık Dünya", "Çok Oyunculu"] },
+            { name: "Deceit", logo: steamGameLogo(466240), url: steamStoreUrl(466240), tags: ["Çıkarım", "Çok Oyunculu", "Aksiyon"] },
         ];
 
         function getGameInitials(name) {
             return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+        }
+
+        function openGamePage(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
         }
 
         function buildGamesGrid() {
@@ -3553,6 +3562,16 @@
                 const card = document.createElement('div');
                 card.className = 'game-card';
                 card.style.animationDelay = delay + 's';
+                card.tabIndex = 0;
+                card.setAttribute('role', 'link');
+                card.setAttribute('aria-label', `${g.name} sayfasını aç`);
+                card.addEventListener('click', () => openGamePage(g.url));
+                card.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openGamePage(g.url);
+                    }
+                });
                 card.innerHTML = `
                     <div class="card-top-bar"></div>
                     <div class="card-scan"></div>
