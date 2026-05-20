@@ -1972,7 +1972,7 @@
             opacity: 1;
         }
         #games-page .card-logo img {
-            max-width: 140px;
+            max-width: min(88%, 220px);
             max-height: 120px;
             object-fit: contain;
             position: relative;
@@ -3512,31 +3512,32 @@
         }
     </script>
     <script>
+        const steamGameLogo = id => `https://cdn.cloudflare.steamstatic.com/steam/apps/${id}/header.jpg`;
         const LOST_DREAMS_GAMES = [
-            { name: "BeamNG.drive", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/BeamNG.drive-logo.svg/320px-BeamNG.drive-logo.svg.png", tags: ["Simülasyon", "Açık Dünya", "Sürüş"] },
-            { name: "Euro Truck Simulator 2", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Euro_Truck_Simulator_2_cover.jpg/220px-Euro_Truck_Simulator_2_cover.jpg", tags: ["Simülasyon", "Sürüş", "Çok Oyunculu"] },
-            { name: "PUBG: Battlegrounds", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3d/PUBG_-_PlayerUnknown%27s_Battlegrounds_Logo.svg/320px-PUBG_-_PlayerUnknown%27s_Battlegrounds_Logo.svg.png", tags: ["Battle Royale", "Atıcılık", "Hayatta Kalma"] },
-            { name: "The Forest", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/The_Forest_cover_art.jpg/220px-The_Forest_cover_art.jpg", tags: ["Hayatta Kalma", "Korku", "Açık Dünya"] },
-            { name: "Unturned", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/60/Unturned_Logo.png/220px-Unturned_Logo.png", tags: ["Hayatta Kalma", "Sandbox", "Zombie"] },
-            { name: "Counter-Strike 2", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/9/92/Counter-Strike_2_full_logo.svg/320px-Counter-Strike_2_full_logo.svg.png", tags: ["FPS", "Rekabetçi", "Taktik"] },
-            { name: "Dying Light", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/65/Dying_Light_cover_art.jpg/220px-Dying_Light_cover_art.jpg", tags: ["Aksiyon", "Parkour", "Zombie"] },
-            { name: "Grand Theft Auto V", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a5/GTA_V_official_logo.png/220px-GTA_V_official_logo.png", tags: ["Açık Dünya", "Aksiyon", "FiveM"] },
-            { name: "Cyberpunk 2077", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Cyberpunk_2077_box_art.jpg/220px-Cyberpunk_2077_box_art.jpg", tags: ["RPG", "Açık Dünya", "Aksiyon"] },
-            { name: "Sea of Thieves", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/38/Sea_of_Thieves_2023_Edition_box_art.jpg/220px-Sea_of_Thieves_2023_Edition_box_art.jpg", tags: ["Macera", "Çok Oyunculu", "Açık Dünya"] },
-            { name: "Battlefield 1", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d7/Battlefield_1_official_cover_art.png/220px-Battlefield_1_official_cover_art.png", tags: ["FPS", "Savaş", "Çok Oyunculu"] },
-            { name: "Left 4 Dead 2", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/L4D2_1280x1024.jpg/220px-L4D2_1280x1024.jpg", tags: ["Co-op", "Aksiyon", "Zombie"] },
-            { name: "Escape The Backrooms", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/Backrooms.jpg/220px-Backrooms.jpg", tags: ["Korku", "Hayatta Kalma", "Co-op"] },
-            { name: "Ranch Simulator", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/73/Ranch_Simulator_Logo.png/220px-Ranch_Simulator_Logo.png", tags: ["Simülasyon", "Çiftlik", "Açık Dünya"] },
-            { name: "Dying Light 2: Stay Human", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Dying_Light_2_Stay_Human.jpg/220px-Dying_Light_2_Stay_Human.jpg", tags: ["Aksiyon", "Parkour", "RPG"] },
-            { name: "Sons Of The Forest", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/e/e4/Sons_of_the_Forest_game_logo.jpg/220px-Sons_of_the_Forest_game_logo.jpg", tags: ["Hayatta Kalma", "Korku", "Co-op"] },
-            { name: "Dying Light: The Beast", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/65/Dying_Light_cover_art.jpg/220px-Dying_Light_cover_art.jpg", tags: ["Aksiyon", "Parkour", "Hayatta Kalma"] },
-            { name: "Dying Light", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/65/Dying_Light_cover_art.jpg/220px-Dying_Light_cover_art.jpg", tags: ["Aksiyon", "Parkour", "Zombie"] },
-            { name: "Back 4 Blood", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/c/ca/Back_4_Blood_cover_art.jpg/220px-Back_4_Blood_cover_art.jpg", tags: ["Co-op", "FPS", "Zombie"] },
-            { name: "Gang Beasts", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Gang_Beasts_box_art.jpg/220px-Gang_Beasts_box_art.jpg", tags: ["Dövüş", "Parti", "Co-op"] },
-            { name: "Assetto Corsa", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Assetto_Corsa_cover.jpg/220px-Assetto_Corsa_cover.jpg", tags: ["Yarış", "Simülasyon", "Sürüş"] },
-            { name: "Zero Hour", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Zero_Hour_%28video_game%29_cover.jpg/220px-Zero_Hour_%28video_game%29_cover.jpg", tags: ["Taktik", "FPS", "Takım"] },
-            { name: "The Crew 2", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/64/The-Crew-2.jpg/220px-The-Crew-2.jpg", tags: ["Yarış", "Açık Dünya", "Çok Oyunculu"] },
-            { name: "Deceit", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7b/Deceit_Logo.jpg/220px-Deceit_Logo.jpg", tags: ["Çıkarım", "Çok Oyunculu", "Aksiyon"] },
+            { name: "BeamNG.drive", logo: steamGameLogo(284160), tags: ["Simülasyon", "Açık Dünya", "Sürüş"] },
+            { name: "Euro Truck Simulator 2", logo: steamGameLogo(227300), tags: ["Simülasyon", "Sürüş", "Çok Oyunculu"] },
+            { name: "PUBG: Battlegrounds", logo: steamGameLogo(578080), tags: ["Battle Royale", "Atıcılık", "Hayatta Kalma"] },
+            { name: "The Forest", logo: steamGameLogo(242760), tags: ["Hayatta Kalma", "Korku", "Açık Dünya"] },
+            { name: "Unturned", logo: steamGameLogo(304930), tags: ["Hayatta Kalma", "Sandbox", "Zombie"] },
+            { name: "Counter-Strike 2", logo: steamGameLogo(730), tags: ["FPS", "Rekabetçi", "Taktik"] },
+            { name: "Dying Light", logo: steamGameLogo(239140), tags: ["Aksiyon", "Parkour", "Zombie"] },
+            { name: "Grand Theft Auto V", logo: steamGameLogo(271590), tags: ["Açık Dünya", "Aksiyon", "FiveM"] },
+            { name: "Cyberpunk 2077", logo: steamGameLogo(1091500), tags: ["RPG", "Açık Dünya", "Aksiyon"] },
+            { name: "Sea of Thieves", logo: steamGameLogo(1172620), tags: ["Macera", "Çok Oyunculu", "Açık Dünya"] },
+            { name: "Battlefield 1", logo: steamGameLogo(1238840), tags: ["FPS", "Savaş", "Çok Oyunculu"] },
+            { name: "Left 4 Dead 2", logo: steamGameLogo(550), tags: ["Co-op", "Aksiyon", "Zombie"] },
+            { name: "Escape The Backrooms", logo: steamGameLogo(1943950), tags: ["Korku", "Hayatta Kalma", "Co-op"] },
+            { name: "Ranch Simulator", logo: steamGameLogo(1119730), tags: ["Simülasyon", "Çiftlik", "Açık Dünya"] },
+            { name: "Dying Light 2: Stay Human", logo: steamGameLogo(534380), tags: ["Aksiyon", "Parkour", "RPG"] },
+            { name: "Sons Of The Forest", logo: steamGameLogo(1326470), tags: ["Hayatta Kalma", "Korku", "Co-op"] },
+            { name: "Dying Light: The Beast", logo: steamGameLogo(3008130), tags: ["Aksiyon", "Parkour", "Hayatta Kalma"] },
+            { name: "Dying Light", logo: steamGameLogo(239140), tags: ["Aksiyon", "Parkour", "Zombie"] },
+            { name: "Back 4 Blood", logo: steamGameLogo(924970), tags: ["Co-op", "FPS", "Zombie"] },
+            { name: "Gang Beasts", logo: steamGameLogo(285900), tags: ["Dövüş", "Parti", "Co-op"] },
+            { name: "Assetto Corsa", logo: steamGameLogo(244210), tags: ["Yarış", "Simülasyon", "Sürüş"] },
+            { name: "Zero Hour", logo: steamGameLogo(1359090), tags: ["Taktik", "FPS", "Takım"] },
+            { name: "The Crew 2", logo: steamGameLogo(646910), tags: ["Yarış", "Açık Dünya", "Çok Oyunculu"] },
+            { name: "Deceit", logo: steamGameLogo(466240), tags: ["Çıkarım", "Çok Oyunculu", "Aksiyon"] },
         ];
 
         function getGameInitials(name) {
