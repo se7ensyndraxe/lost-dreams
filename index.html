@@ -37,6 +37,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syncopate:wght@400;700&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 
     <style>
@@ -1746,6 +1747,369 @@
             margin-top: 10px;
             display: none;
         }
+
+        /* ── GAMES CATALOG ── */
+        .games-liq-btn {
+            width: 100%;
+            border-color: rgba(0,212,255,0.18);
+            font: inherit;
+            text-align: left;
+            cursor: none;
+        }
+        .games-liq-btn .btn-icon {
+            background: rgba(0,212,255,0.08);
+        }
+        .games-liq-btn:hover {
+            border-color: rgba(0,212,255,0.35);
+            box-shadow:
+                0 2px 0 inset var(--btn-shine),
+                0 -1px 0 inset rgba(0,0,0,0.06),
+                0 20px 50px var(--shadow),
+                0 0 26px rgba(0,212,255,0.12);
+        }
+
+        body.games-open {
+            overflow: hidden;
+        }
+        body.games-open #theme-toggle,
+        body.games-open #photos-btn-wrap,
+        body.games-open #photos-panel,
+        body.games-open #music-panel,
+        body.games-open #easter-egg-section,
+        body.games-open #ban-appeal-trigger {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        body.cursor-games #cursor-ring {
+            width: 52px;
+            height: 52px;
+            border-color: #e84040;
+            border-style: dashed;
+            border-width: 2px;
+            animation: gamesCursorSpin 2s linear infinite;
+        }
+        body.cursor-games #cursor-dot {
+            background: #e84040;
+            box-shadow: 0 0 10px #e84040, 0 0 24px rgba(232,64,64,0.45);
+            transform: translate(-50%, -50%) scale(1.45);
+        }
+        @keyframes gamesCursorSpin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        #games-page {
+            --gold: #c8a84b;
+            --gold-light: #f0d080;
+            --gold-dark: #8a6c20;
+            --red: #e84040;
+            --game-dark: #0a0a0a;
+            --panel: #141414;
+            --game-text: #d4c49a;
+            --game-muted: #7a6a4a;
+            display: none;
+            position: fixed;
+            inset: 0;
+            min-height: 100vh;
+            padding: 60px 40px 80px;
+            background:
+                radial-gradient(ellipse 100% 50% at 50% 0%, rgba(200,168,75,0.06) 0%, transparent 60%),
+                var(--game-dark);
+            color: var(--game-text);
+            z-index: 50000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            font-family: 'Exo 2', 'Jost', sans-serif;
+        }
+        #games-page.active {
+            display: block;
+            animation: gamesPageIn .6s both;
+        }
+        #games-page::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 3px,
+                rgba(0,0,0,0.08) 3px,
+                rgba(0,0,0,0.08) 4px
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+        #games-page > * {
+            position: relative;
+            z-index: 1;
+        }
+        #games-page .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        #games-page .page-header::before {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--gold));
+            margin: 0 auto 24px;
+        }
+        #games-page .page-header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(200,168,75,0.4);
+            white-space: normal;
+            line-height: 1.15;
+        }
+        #games-page .page-header h1 span {
+            color: var(--gold);
+        }
+        #games-page .header-line {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        #games-page .header-line::before,
+        #games-page .header-line::after {
+            content: '';
+            height: 1px;
+            width: 80px;
+            background: linear-gradient(to right, transparent, var(--gold-dark));
+        }
+        #games-page .header-line::after {
+            background: linear-gradient(to left, transparent, var(--gold-dark));
+        }
+        #games-page .header-count {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.25em;
+            color: var(--game-muted);
+        }
+        #games-page .back-btn {
+            position: fixed;
+            top: 28px;
+            left: 32px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: var(--game-muted);
+            background: rgba(10,10,10,0.8);
+            border: 1px solid rgba(200,168,75,0.2);
+            padding: 10px 20px;
+            cursor: none;
+            transition: color .3s, border-color .3s;
+            clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+        }
+        #games-page .back-btn:hover {
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+        #games-page .back-arrow {
+            transition: transform .3s;
+        }
+        #games-page .back-btn:hover .back-arrow {
+            transform: translateX(-4px);
+        }
+        #games-page .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #games-page .game-card {
+            position: relative;
+            background: var(--panel);
+            border: 1px solid rgba(200,168,75,0.15);
+            overflow: hidden;
+            cursor: none;
+            transition: border-color .3s, transform .3s;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+            animation: gameCardIn .5s both;
+        }
+        #games-page .game-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+        }
+        #games-page .card-top-bar {
+            height: 3px;
+            background: linear-gradient(to right, var(--gold-dark), var(--gold), var(--gold-dark));
+            opacity: 0;
+            transition: opacity .3s;
+        }
+        #games-page .game-card:hover .card-top-bar {
+            opacity: 1;
+        }
+        #games-page .card-logo {
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            background: rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+        #games-page .card-logo-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(200,168,75,0.06) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity .4s;
+        }
+        #games-page .game-card:hover .card-logo-bg {
+            opacity: 1;
+        }
+        #games-page .card-logo img {
+            max-width: 140px;
+            max-height: 120px;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 0 12px rgba(200,168,75,0.2));
+            transition: filter .3s, transform .3s;
+        }
+        #games-page .game-card:hover .card-logo img {
+            filter: drop-shadow(0 0 20px rgba(200,168,75,0.5));
+            transform: scale(1.05);
+        }
+        #games-page .card-logo-fallback {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: rgba(200,168,75,0.25);
+            letter-spacing: 0;
+            text-align: center;
+            line-height: 1;
+            position: relative;
+            z-index: 1;
+            user-select: none;
+            transition: color .3s;
+        }
+        #games-page .game-card:hover .card-logo-fallback {
+            color: rgba(200,168,75,0.5);
+        }
+        #games-page .card-body {
+            padding: 16px 20px 20px;
+            border-top: 1px solid rgba(200,168,75,0.1);
+        }
+        #games-page .card-num {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.65rem;
+            color: var(--game-muted);
+            letter-spacing: 0.2em;
+            margin-bottom: 4px;
+        }
+        #games-page .card-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #fff;
+            margin-bottom: 10px;
+            line-height: 1.2;
+            transition: color .3s;
+        }
+        #games-page .game-card:hover .card-name {
+            color: var(--gold-light);
+        }
+        #games-page .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        #games-page .tag {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            padding: 3px 10px;
+            border: 1px solid rgba(200,168,75,0.25);
+            color: var(--game-muted);
+            clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+            transition: border-color .3s, color .3s;
+        }
+        #games-page .game-card:hover .tag {
+            border-color: rgba(200,168,75,0.5);
+            color: var(--gold);
+        }
+        #games-page .card-corner {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--game-dark);
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            transition: background .3s;
+        }
+        #games-page .card-scan {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to bottom, transparent, rgba(200,168,75,0.04), transparent);
+            transition: top 0s;
+        }
+        #games-page .game-card:hover .card-scan {
+            top: 200%;
+            transition: top 0.6s ease;
+        }
+        #games-page .page-footer {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(200,168,75,0.1);
+        }
+        #games-page .page-footer span {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            color: var(--game-muted);
+        }
+        @keyframes gamesPageIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gameCardIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 720px) {
+            #games-page {
+                padding: 86px 18px 52px;
+            }
+            #games-page .back-btn {
+                top: 18px;
+                left: 18px;
+                padding: 9px 14px;
+                font-size: 0.78rem;
+            }
+            #games-page .games-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            #games-page .header-line::before,
+            #games-page .header-line::after {
+                width: 42px;
+            }
+            #games-page .header-count {
+                letter-spacing: 0.16em;
+                font-size: 0.76rem;
+            }
+        }
     </style>
 </head>
 
@@ -1958,6 +2322,16 @@
                 </div>
                 <i class="fa-solid fa-arrow-right btn-arrow"></i>
             </a>
+            <button type="button" class="liq-btn games-liq-btn" id="games-btn" onclick="openGames()">
+                <div class="btn-left">
+                    <div class="btn-icon"><i class="fa-solid fa-gamepad"></i></div>
+                    <div class="btn-texts">
+                        <span class="btn-label">Oynadığımız Oyunlar</span>
+                        <span class="btn-sub">aktif katalog</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-arrow-right btn-arrow"></i>
+            </button>
         </div>
         <div class="join-block">
             <a href="https://discord.gg/JJsEbmGyFX"
@@ -1973,6 +2347,22 @@
             </div>
         </div>
     </div>
+
+    <section id="games-page">
+        <button class="back-btn" onclick="closeGames()">
+            <span class="back-arrow">◀</span> GERİ DÖN
+        </button>
+        <div class="page-header">
+            <h1>OYNADIĞIMIZ <span>OYUNLAR</span></h1>
+            <div class="header-line">
+                <span class="header-count">24 OYUN // AKTİF KATALOĞu</span>
+            </div>
+        </div>
+        <div class="games-grid" id="gamesGrid"></div>
+        <div class="page-footer">
+            <span>// COMMUNITY GAME LIBRARY — 2024 //</span>
+        </div>
+    </section>
 
     <!-- EASTER EGG SECTION -->
     <div id="easter-egg-section">
@@ -3120,6 +3510,88 @@
                 errEl.style.display = 'block';
             }
         }
+    </script>
+    <script>
+        const LOST_DREAMS_GAMES = [
+            { name: "BeamNG.drive", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/BeamNG.drive-logo.svg/320px-BeamNG.drive-logo.svg.png", tags: ["Simülasyon", "Açık Dünya", "Sürüş"] },
+            { name: "Euro Truck Simulator 2", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Euro_Truck_Simulator_2_cover.jpg/220px-Euro_Truck_Simulator_2_cover.jpg", tags: ["Simülasyon", "Sürüş", "Çok Oyunculu"] },
+            { name: "PUBG: Battlegrounds", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3d/PUBG_-_PlayerUnknown%27s_Battlegrounds_Logo.svg/320px-PUBG_-_PlayerUnknown%27s_Battlegrounds_Logo.svg.png", tags: ["Battle Royale", "Atıcılık", "Hayatta Kalma"] },
+            { name: "The Forest", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/The_Forest_cover_art.jpg/220px-The_Forest_cover_art.jpg", tags: ["Hayatta Kalma", "Korku", "Açık Dünya"] },
+            { name: "Unturned", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/60/Unturned_Logo.png/220px-Unturned_Logo.png", tags: ["Hayatta Kalma", "Sandbox", "Zombie"] },
+            { name: "Counter-Strike 2", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/9/92/Counter-Strike_2_full_logo.svg/320px-Counter-Strike_2_full_logo.svg.png", tags: ["FPS", "Rekabetçi", "Taktik"] },
+            { name: "Dying Light", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/65/Dying_Light_cover_art.jpg/220px-Dying_Light_cover_art.jpg", tags: ["Aksiyon", "Parkour", "Zombie"] },
+            { name: "Grand Theft Auto V", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a5/GTA_V_official_logo.png/220px-GTA_V_official_logo.png", tags: ["Açık Dünya", "Aksiyon", "FiveM"] },
+            { name: "Cyberpunk 2077", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Cyberpunk_2077_box_art.jpg/220px-Cyberpunk_2077_box_art.jpg", tags: ["RPG", "Açık Dünya", "Aksiyon"] },
+            { name: "Sea of Thieves", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/3/38/Sea_of_Thieves_2023_Edition_box_art.jpg/220px-Sea_of_Thieves_2023_Edition_box_art.jpg", tags: ["Macera", "Çok Oyunculu", "Açık Dünya"] },
+            { name: "Battlefield 1", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d7/Battlefield_1_official_cover_art.png/220px-Battlefield_1_official_cover_art.png", tags: ["FPS", "Savaş", "Çok Oyunculu"] },
+            { name: "Left 4 Dead 2", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/L4D2_1280x1024.jpg/220px-L4D2_1280x1024.jpg", tags: ["Co-op", "Aksiyon", "Zombie"] },
+            { name: "Escape The Backrooms", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/Backrooms.jpg/220px-Backrooms.jpg", tags: ["Korku", "Hayatta Kalma", "Co-op"] },
+            { name: "Ranch Simulator", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/73/Ranch_Simulator_Logo.png/220px-Ranch_Simulator_Logo.png", tags: ["Simülasyon", "Çiftlik", "Açık Dünya"] },
+            { name: "Dying Light 2: Stay Human", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Dying_Light_2_Stay_Human.jpg/220px-Dying_Light_2_Stay_Human.jpg", tags: ["Aksiyon", "Parkour", "RPG"] },
+            { name: "Sons Of The Forest", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/e/e4/Sons_of_the_Forest_game_logo.jpg/220px-Sons_of_the_Forest_game_logo.jpg", tags: ["Hayatta Kalma", "Korku", "Co-op"] },
+            { name: "Dying Light: The Beast", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/65/Dying_Light_cover_art.jpg/220px-Dying_Light_cover_art.jpg", tags: ["Aksiyon", "Parkour", "Hayatta Kalma"] },
+            { name: "Dying Light", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/65/Dying_Light_cover_art.jpg/220px-Dying_Light_cover_art.jpg", tags: ["Aksiyon", "Parkour", "Zombie"] },
+            { name: "Back 4 Blood", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/c/ca/Back_4_Blood_cover_art.jpg/220px-Back_4_Blood_cover_art.jpg", tags: ["Co-op", "FPS", "Zombie"] },
+            { name: "Gang Beasts", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Gang_Beasts_box_art.jpg/220px-Gang_Beasts_box_art.jpg", tags: ["Dövüş", "Parti", "Co-op"] },
+            { name: "Assetto Corsa", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Assetto_Corsa_cover.jpg/220px-Assetto_Corsa_cover.jpg", tags: ["Yarış", "Simülasyon", "Sürüş"] },
+            { name: "Zero Hour", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Zero_Hour_%28video_game%29_cover.jpg/220px-Zero_Hour_%28video_game%29_cover.jpg", tags: ["Taktik", "FPS", "Takım"] },
+            { name: "The Crew 2", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/64/The-Crew-2.jpg/220px-The-Crew-2.jpg", tags: ["Yarış", "Açık Dünya", "Çok Oyunculu"] },
+            { name: "Deceit", logo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7b/Deceit_Logo.jpg/220px-Deceit_Logo.jpg", tags: ["Çıkarım", "Çok Oyunculu", "Aksiyon"] },
+        ];
+
+        function getGameInitials(name) {
+            return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+        }
+
+        function buildGamesGrid() {
+            const grid = document.getElementById('gamesGrid');
+            if (!grid || grid.dataset.built === 'true') return;
+            grid.innerHTML = '';
+            LOST_DREAMS_GAMES.forEach((g, i) => {
+                const delay = (i % 8) * 0.05;
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.style.animationDelay = delay + 's';
+                card.innerHTML = `
+                    <div class="card-top-bar"></div>
+                    <div class="card-scan"></div>
+                    <div class="card-corner"></div>
+                    <div class="card-logo">
+                        <div class="card-logo-bg"></div>
+                        <img src="${g.logo}" alt="${g.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="card-logo-fallback" style="display:none">${getGameInitials(g.name)}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-num">${String(i + 1).padStart(2, '0')}</div>
+                        <div class="card-name">${g.name}</div>
+                        <div class="card-tags">
+                            ${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                        </div>
+                    </div>`;
+                grid.appendChild(card);
+            });
+            grid.dataset.built = 'true';
+        }
+
+        function openGames() {
+            const gamesPage = document.getElementById('games-page');
+            buildGamesGrid();
+            document.body.classList.add('games-open');
+            gamesPage.classList.add('active');
+            gamesPage.scrollTop = 0;
+        }
+
+        function closeGames() {
+            document.getElementById('games-page').classList.remove('active');
+            document.body.classList.remove('games-open', 'cursor-games');
+        }
+
+        document.getElementById('games-page').addEventListener('mouseover', function(e) {
+            document.body.classList.toggle('cursor-games', Boolean(e.target.closest('.game-card')));
+        });
+        document.getElementById('games-page').addEventListener('mouseleave', function() {
+            document.body.classList.remove('cursor-games');
+        });
     </script>
 </body>
 </html>
