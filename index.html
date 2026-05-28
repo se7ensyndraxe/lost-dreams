@@ -1409,10 +1409,39 @@
             -webkit-text-fill-color: rgba(0,212,255,0.4);
         }
 
-        .easter-label.active-users { margin-top: 18px; }
+        .easter-label.active-admins {
+            margin-top: 24px;
+            color: rgba(240,208,128,0.7);
+            text-shadow: 0 0 12px rgba(240,208,128,0.2);
+        }
+        .easter-names.active-admins-row {
+            display: grid;
+            gap: 6px;
+            color: rgba(255,255,255,0.9);
+            font-size: 12px;
+            line-height: 1.55;
+        }
+        .active-admin-name {
+            display: block;
+            background: linear-gradient(90deg, #f0d080, #ffffff, #00d4ff, #ffffff, #f0d080);
+            background-size: 260% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: adminNameFlow 3.2s ease infinite;
+            filter: drop-shadow(0 0 10px rgba(0,212,255,0.22));
+        }
+        .active-admin-name:nth-child(2) { animation-delay: .16s; }
+        .active-admin-name:nth-child(3) { animation-delay: .32s; }
+        .active-admin-name:nth-child(4) { animation-delay: .48s; }
+        .easter-label.active-users { margin-top: 28px; }
         .easter-names.active-users-row {
             color: rgba(200,220,255,0.75);
             font-size: 12px;
+        }
+        @keyframes adminNameFlow {
+            0%, 100% { background-position: 0% 50%; transform: translateY(0); }
+            50% { background-position: 100% 50%; transform: translateY(-1px); }
         }
 
         /* h1 hover easter egg hint */
@@ -1928,6 +1957,90 @@
             max-width: 1400px;
             margin: 0 auto;
         }
+        #games-page .games-photos-section {
+            grid-column: 1 / -1;
+            position: relative;
+            padding: 24px;
+            margin: 4px 0 8px;
+            background:
+                linear-gradient(135deg, rgba(0,212,255,0.08), rgba(200,168,75,0.04)),
+                rgba(10,10,10,0.72);
+            border: 1px solid rgba(0,212,255,0.18);
+            overflow: hidden;
+            clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+            box-shadow: 0 18px 50px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        #games-page .games-photos-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, transparent, rgba(0,212,255,0.07), transparent),
+                radial-gradient(ellipse at 20% 0%, rgba(0,212,255,0.16), transparent 45%);
+            opacity: 0.75;
+            pointer-events: none;
+        }
+        #games-page .games-photos-head {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        #games-page .games-photos-head::before,
+        #games-page .games-photos-head::after {
+            content: '';
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(90deg, transparent, rgba(0,212,255,0.45), transparent);
+        }
+        #games-page .games-photos-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1rem, 2vw, 1.45rem);
+            font-weight: 900;
+            letter-spacing: 0.28em;
+            color: #fff;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ffffff, #00d4ff, #f0d080, #ffffff);
+            background-size: 250% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gamesPhotosTitle 3.4s ease infinite;
+            filter: drop-shadow(0 0 12px rgba(0,212,255,0.42));
+        }
+        #games-page .games-photos-grid {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 12px;
+        }
+        #games-page .games-photo-thumb {
+            aspect-ratio: 16 / 10;
+            border: 1px solid rgba(0,212,255,0.18);
+            background: rgba(0,0,0,0.4);
+            padding: 0;
+            overflow: hidden;
+            cursor: none;
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+        }
+        #games-page .games-photo-thumb:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0,212,255,0.62);
+            box-shadow: 0 0 24px rgba(0,212,255,0.18);
+        }
+        #games-page .games-photo-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform .45s ease, filter .35s ease;
+        }
+        #games-page .games-photo-thumb:hover img {
+            transform: scale(1.08);
+            filter: brightness(1.12) saturate(1.18);
+        }
         #games-page .game-card {
             position: relative;
             background: var(--panel);
@@ -2087,9 +2200,19 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes gamesPhotosTitle {
+            0% { background-position: 0% 50%; filter: drop-shadow(0 0 8px rgba(0,212,255,0.28)); }
+            50% { background-position: 100% 50%; filter: drop-shadow(0 0 18px rgba(240,208,128,0.35)); }
+            100% { background-position: 0% 50%; filter: drop-shadow(0 0 8px rgba(0,212,255,0.28)); }
+        }
         @keyframes gameCardIn {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 1080px) {
+            #games-page .games-photos-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
         }
         @media (max-width: 720px) {
             #games-page {
@@ -2104,6 +2227,13 @@
             #games-page .games-grid {
                 grid-template-columns: 1fr;
                 gap: 16px;
+            }
+            #games-page .games-photos-section {
+                padding: 18px;
+            }
+            #games-page .games-photos-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
             }
             #games-page .header-line::before,
             #games-page .header-line::after {
@@ -2390,11 +2520,18 @@
             </div>
             <div class="easter-label co">CO-FOUNDERS</div>
             <div class="easter-names co-row">
-                𝐋𝐃✦ 𝐉𝐚𝐬𝐢𝐮𝐬𝐬&nbsp;&nbsp;<span class="easter-sep">|</span>&nbsp;&nbsp;𝐋𝐃✦ BlooDYEmiR01&nbsp;&nbsp;<span class="easter-sep">|</span>&nbsp;&nbsp;𝐋𝐃✦ r✵chel
+                𝐋𝐃✦ BlooDYEmiR01&nbsp;&nbsp;<span class="easter-sep">|</span>&nbsp;&nbsp;𝐋𝐃✦ r✵chel
+            </div>
+            <div class="easter-label active-admins">MOST ACTIVE ADMINS</div>
+            <div class="easter-names active-admins-row">
+                <span class="active-admin-name">1. 𝐋𝐃✦ 𝐒𝐄𝟕𝐄𝐍𝐒𝐘𝐍𝐃𝐑𝐀𝐗𝐄</span>
+                <span class="active-admin-name">2. 𝐋𝐃✦ 𝐆𝐡𝐨𝐬𝐭</span>
+                <span class="active-admin-name">3. 𝐋𝐃✦ SylaxV</span>
+                <span class="active-admin-name">4. 𝐋𝐃✦ BlooDYEmiR01</span>
             </div>
             <div class="easter-label active-users">MOST ACTIVE USERS</div>
             <div class="easter-names active-users-row">
-               [ ✦ Ilgın | 16 ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+               [ ✦ Ilgın | 16 ]&nbsp;&nbsp;[ ✦ Sinan | 15 ]&nbsp;&nbsp;&nbsp;&nbsp;
 
             </div>
         </div>
@@ -3544,9 +3681,34 @@
             { name: "The Crew 2", logo: steamGameLogo(646910), url: steamStoreUrl(646910), tags: ["Yarış", "Açık Dünya", "Çok Oyunculu"] },
             { name: "Deceit", logo: steamGameLogo(466240), url: steamStoreUrl(466240), tags: ["Çıkarım", "Çok Oyunculu", "Aksiyon"] },
         ];
+        const GAMES_PHOTOS = [
+            "https://i.ibb.co/2YKnSTMq/20260510003005-1.jpg",
+            "https://i.ibb.co/3946XQ7c/20260509195702-1.jpg",
+            "https://i.ibb.co/gbPRw9c8/20260509232600-1.jpg",
+            "https://i.ibb.co/cSTBS18K/20260510224956-1.jpg",
+            "https://i.ibb.co/6RLKY0Zn/20260510185444-1.jpg",
+            "https://i.ibb.co/gZhr1mkJ/20260512220048-1.jpg"
+        ];
 
         function getGameInitials(name) {
             return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+        }
+
+        function createGamesPhotosSection() {
+            const section = document.createElement('div');
+            section.className = 'games-photos-section';
+            section.innerHTML = `
+                <div class="games-photos-head">
+                    <div class="games-photos-title">Photos</div>
+                </div>
+                <div class="games-photos-grid">
+                    ${GAMES_PHOTOS.map((src, index) => `
+                        <button type="button" class="games-photo-thumb" onclick="event.stopPropagation(); openLightbox('${src}')" aria-label="Photo ${index + 1}">
+                            <img src="${src}" alt="Photo ${index + 1}" loading="lazy">
+                        </button>
+                    `).join('')}
+                </div>`;
+            return section;
         }
 
         function openGamePage(url) {
@@ -3558,6 +3720,9 @@
             if (!grid || grid.dataset.built === 'true') return;
             grid.innerHTML = '';
             LOST_DREAMS_GAMES.forEach((g, i) => {
+                if (g.name === "FiveM") {
+                    grid.appendChild(createGamesPhotosSection());
+                }
                 const delay = (i % 8) * 0.05;
                 const card = document.createElement('div');
                 card.className = 'game-card';
