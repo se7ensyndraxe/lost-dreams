@@ -1957,87 +1957,72 @@
             max-width: 1400px;
             margin: 0 auto;
         }
-        #games-page .games-photos-section {
-            grid-column: 1 / -1;
-            position: relative;
-            padding: 24px;
-            margin: 4px 0 8px;
-            background:
-                linear-gradient(135deg, rgba(0,212,255,0.08), rgba(200,168,75,0.04)),
-                rgba(10,10,10,0.72);
-            border: 1px solid rgba(0,212,255,0.18);
-            overflow: hidden;
-            clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
-            box-shadow: 0 18px 50px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.05);
-        }
-        #games-page .games-photos-section::before {
-            content: '';
+        #games-page .card-photos-btn {
             position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(90deg, transparent, rgba(0,212,255,0.07), transparent),
-                radial-gradient(ellipse at 20% 0%, rgba(0,212,255,0.16), transparent 45%);
-            opacity: 0.75;
-            pointer-events: none;
-        }
-        #games-page .games-photos-head {
-            position: relative;
-            display: flex;
+            top: 12px;
+            right: 12px;
+            z-index: 3;
+            display: inline-flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 18px;
-        }
-        #games-page .games-photos-head::before,
-        #games-page .games-photos-head::after {
-            content: '';
-            height: 1px;
-            flex: 1;
-            background: linear-gradient(90deg, transparent, rgba(0,212,255,0.45), transparent);
-        }
-        #games-page .games-photos-title {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(1rem, 2vw, 1.45rem);
-            font-weight: 900;
-            letter-spacing: 0.28em;
-            color: #fff;
+            justify-content: center;
+            min-width: 72px;
+            height: 28px;
+            padding: 0 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
-            background: linear-gradient(90deg, #ffffff, #00d4ff, #f0d080, #ffffff);
-            background-size: 250% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gamesPhotosTitle 3.4s ease infinite;
-            filter: drop-shadow(0 0 12px rgba(0,212,255,0.42));
+            color: #eafcff;
+            background: rgba(0,0,0,0.66);
+            border: 1px solid rgba(0,212,255,0.42);
+            cursor: none;
+            clip-path: polygon(7px 0%, 100% 0%, calc(100% - 7px) 100%, 0% 100%);
+            box-shadow: 0 0 18px rgba(0,212,255,0.12);
+            transition: color .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease, transform .25s ease;
         }
-        #games-page .games-photos-grid {
-            position: relative;
+        #games-page .card-photos-btn:hover,
+        #games-page .game-card.photos-open .card-photos-btn {
+            color: #fff;
+            background: rgba(0,212,255,0.16);
+            border-color: rgba(0,212,255,0.82);
+            box-shadow: 0 0 24px rgba(0,212,255,0.24);
+            transform: translateY(-1px);
+        }
+        #games-page .card-photos-panel {
+            display: none;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 7px;
+            margin-top: 14px;
+            padding-top: 13px;
+            border-top: 1px solid rgba(0,212,255,0.16);
+        }
+        #games-page .game-card.photos-open .card-photos-panel {
             display: grid;
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-            gap: 12px;
         }
-        #games-page .games-photo-thumb {
+        #games-page .card-photo-thumb {
             aspect-ratio: 16 / 10;
-            border: 1px solid rgba(0,212,255,0.18);
-            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0,212,255,0.2);
+            background: rgba(0,0,0,0.45);
             padding: 0;
             overflow: hidden;
             cursor: none;
-            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-            transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+            clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+            transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
         }
-        #games-page .games-photo-thumb:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0,212,255,0.62);
-            box-shadow: 0 0 24px rgba(0,212,255,0.18);
+        #games-page .card-photo-thumb:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0,212,255,0.7);
+            box-shadow: 0 0 18px rgba(0,212,255,0.16);
         }
-        #games-page .games-photo-thumb img {
+        #games-page .card-photo-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform .45s ease, filter .35s ease;
+            transition: transform .35s ease, filter .3s ease;
         }
-        #games-page .games-photo-thumb:hover img {
+        #games-page .card-photo-thumb:hover img {
             transform: scale(1.08);
             filter: brightness(1.12) saturate(1.18);
         }
@@ -2200,19 +2185,9 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes gamesPhotosTitle {
-            0% { background-position: 0% 50%; filter: drop-shadow(0 0 8px rgba(0,212,255,0.28)); }
-            50% { background-position: 100% 50%; filter: drop-shadow(0 0 18px rgba(240,208,128,0.35)); }
-            100% { background-position: 0% 50%; filter: drop-shadow(0 0 8px rgba(0,212,255,0.28)); }
-        }
         @keyframes gameCardIn {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-        @media (max-width: 1080px) {
-            #games-page .games-photos-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
         }
         @media (max-width: 720px) {
             #games-page {
@@ -2228,10 +2203,14 @@
                 grid-template-columns: 1fr;
                 gap: 16px;
             }
-            #games-page .games-photos-section {
-                padding: 18px;
+            #games-page .card-photos-btn {
+                top: 10px;
+                right: 10px;
+                min-width: 66px;
+                height: 26px;
+                font-size: 0.68rem;
             }
-            #games-page .games-photos-grid {
+            #games-page .card-photos-panel {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 10px;
             }
@@ -3694,25 +3673,19 @@
             return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
         }
 
-        function createGamesPhotosSection() {
-            const section = document.createElement('div');
-            section.className = 'games-photos-section';
-            section.innerHTML = `
-                <div class="games-photos-head">
-                    <div class="games-photos-title">Photos</div>
-                </div>
-                <div class="games-photos-grid">
-                    ${GAMES_PHOTOS.map((src, index) => `
-                        <button type="button" class="games-photo-thumb" onclick="event.stopPropagation(); openLightbox('${src}')" aria-label="Photo ${index + 1}">
-                            <img src="${src}" alt="Photo ${index + 1}" loading="lazy">
-                        </button>
-                    `).join('')}
-                </div>`;
-            return section;
-        }
-
         function openGamePage(url) {
             window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        function toggleGamePhotos(event, btn) {
+            event.preventDefault();
+            event.stopPropagation();
+            const card = btn.closest('.game-card');
+            const panel = card && card.querySelector('.card-photos-panel');
+            if (!card || !panel) return;
+            const isOpen = card.classList.toggle('photos-open');
+            btn.setAttribute('aria-expanded', String(isOpen));
+            panel.setAttribute('aria-hidden', String(!isOpen));
         }
 
         function buildGamesGrid() {
@@ -3720,18 +3693,29 @@
             if (!grid || grid.dataset.built === 'true') return;
             grid.innerHTML = '';
             LOST_DREAMS_GAMES.forEach((g, i) => {
-                if (g.name === "FiveM") {
-                    grid.appendChild(createGamesPhotosSection());
-                }
                 const delay = (i % 8) * 0.05;
+                const isFiveM = g.name === "FiveM";
+                const gamePhotosButton = isFiveM ? `<button type="button" class="card-photos-btn" onclick="toggleGamePhotos(event, this)" aria-expanded="false">Photos</button>` : '';
+                const gamePhotosPanel = isFiveM ? `
+                        <div class="card-photos-panel" aria-hidden="true">
+                            ${GAMES_PHOTOS.map((src, index) => `
+                                <button type="button" class="card-photo-thumb" onclick="event.preventDefault(); event.stopPropagation(); openLightbox('${src}')" aria-label="FiveM photo ${index + 1}">
+                                    <img src="${src}" alt="FiveM photo ${index + 1}" loading="lazy">
+                                </button>
+                            `).join('')}
+                        </div>` : '';
                 const card = document.createElement('div');
                 card.className = 'game-card';
                 card.style.animationDelay = delay + 's';
                 card.tabIndex = 0;
                 card.setAttribute('role', 'link');
                 card.setAttribute('aria-label', `${g.name} sayfasını aç`);
-                card.addEventListener('click', () => openGamePage(g.url));
+                card.addEventListener('click', e => {
+                    if (e.target.closest('.card-photos-btn, .card-photo-thumb')) return;
+                    openGamePage(g.url);
+                });
                 card.addEventListener('keydown', e => {
+                    if (e.target.closest('.card-photos-btn, .card-photo-thumb')) return;
                     if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
                         openGamePage(g.url);
@@ -3743,6 +3727,7 @@
                     <div class="card-corner"></div>
                     <div class="card-logo">
                         <div class="card-logo-bg"></div>
+                        ${gamePhotosButton}
                         <img src="${g.logo}" alt="${g.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="card-logo-fallback" style="display:none">${getGameInitials(g.name)}</div>
                     </div>
@@ -3752,6 +3737,7 @@
                         <div class="card-tags">
                             ${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}
                         </div>
+                        ${gamePhotosPanel}
                     </div>`;
                 grid.appendChild(card);
             });
