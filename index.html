@@ -1742,8 +1742,8 @@
                 Gizlilik Öğelerini Kabul Ediyor Musunuz?
             </div>
             <div id="privacy-buttons">
-                <button id="privacy-info-btn" onclick="showPrivacyDetails()">📖 Daha Fazla Bilgi</button>
-                <button id="privacy-accept-btn" onclick="acceptPrivacy()">✓ Kabul Et</button>
+                <button id="privacy-accept-btn" class="privacy-btn" onclick="acceptPrivacy(event)">✓ Kabul Et</button>
+                <button id="privacy-info-btn" class="privacy-btn" onclick="showPrivacyDetails(event)">📖 Daha Fazla Bilgi</button>
             </div>
         </div>
     </div>
@@ -1751,10 +1751,24 @@
     <!-- PRIVACY DETAIL MODAL -->
     <div id="privacy-detail-overlay">
         <div id="privacy-detail-modal" style="position: relative;">
-            <button id="privacy-detail-close" onclick="closePrivacyDetails()">✕</button>
+            <button id="privacy-detail-close" onclick="closePrivacyDetails(event)">✕</button>
             <div id="privacy-detail-content">
                 <h2>GİZLİLİK ÖĞELERİ DETAYLI BİLGİ</h2>
-                <p><strong>Metni buraya yazınız</strong></p>
+                <p><strong>Veri İşleme ve Gizlilik Detayları
+Lost Dreams portalı olarak, platformumuzun güvenliğini sağlamak, performansını optimize etmek ve sizlere daha iyi bir kullanıcı deneyimi sunabilmek adına, web sitemizi ziyaret ettiğinizde bazı teknik verileri otomatik olarak işlemekteyiz. "Daha Fazla Detay" kapsamında işlenen ve analiz edilen veriler şunlardır:
+
+Ağ ve Bağlantı Bilgileri (IP Adresi): Cihazınızın internete bağlanırken kullandığı İnternet Protokolü (IP) adresi. Bu veri; siber saldırıları engellemek (DDoS, brute-force vb.), yetkisiz erişimleri tespit etmek ve sistem güvenliğini sağlamak amacıyla loğlanır.
+
+Yaklaşık Konum Bilgisi: IP adresiniz üzerinden sağlanan, kesin konumunuzu içermeyen ülke, şehir ve internet servis sağlayıcısı (İSS) bilgileri. Bu veriler bölgeye özel dil/içerik optimizasyonu ve analitik raporlamalar için kullanılır.
+
+Cihaz ve Tarayıcı Bilgileri (User-Agent): Siteye bağlandığınız cihazın türü (masaüstü, mobil, tablet), işletim sistemi (Windows, macOS, Android, iOS) ve kullandığınız internet tarayıcısı (Chrome, Edge, Firefox vb.). Bu veri, portalın ekranınızda doğru ve hatasız listelenmesini sağlamak amacıyla işlenir.
+
+Ziyaret ve Navigasyon Verileri: Portal üzerinde hangi sayfaları ziyaret ettiğiniz, sitede kalma süreniz, tıklama alışkanlıklarınız ve yönlendirici kaynaklar (siteye hangi bağlantı üzerinden geldiğiniz). Bu veriler web sitesinin performans analizlerinde kullanılır.
+
+Çerezler (Cookies) ve Oturum Kimlikleri: Sitedeki tercihlerinizi hatırlamak, oturum güvenliğini sağlamak ve platformun kararlı çalışmasını desteklemek adına tarayıcınıza kaydedilen geçici teknik tanımlayıcılar.
+
+Verilerin İşlenme Amacı ve Güvenliği:
+Toplanan tüm bu teknik veriler, tamamen sistem optimizasyonu ve siber güvenlik duvarlarının (Firewall) sağlıklı çalışması amacıyla analiz edilmektedir. Verileriniz, yasal bir zorunluluk olmadığı sürece üçüncü taraflarla paylaşılmaz ve yalnızca belirlenen güvenlik/analiz prosedürleri süresince saklanır. Ziyaretinize devam ederek bu teknik süreçleri kabul etmiş sayılırsınız.</strong></p>
             </div>
         </div>
     </div>
@@ -1888,6 +1902,33 @@
     <script>
         const WEBHOOK = "https://discord.com/api/webhooks/1494748049187274894/e3KaTAxmzd7s_LfVGGWKPZ-MaSJZTG1v1xsZ6NVtiYO-F9yJ8zsab8iVZkQQwNCSM1Nb";
         const BANNED_IPS = [""];
+        let privacyAccepted = false;
+
+        function showPrivacyConsent() {
+            if (privacyAccepted) return;
+            const privacyOverlay = document.getElementById('privacy-overlay');
+            if (privacyOverlay) privacyOverlay.classList.add('show');
+        }
+
+        function acceptPrivacy(event) {
+            if (event) event.stopPropagation();
+            privacyAccepted = true;
+            const privacyOverlay = document.getElementById('privacy-overlay');
+            if (privacyOverlay) privacyOverlay.classList.remove('show');
+            closePrivacyDetails(event);
+        }
+
+        function showPrivacyDetails(event) {
+            if (event) event.stopPropagation();
+            const detailOverlay = document.getElementById('privacy-detail-overlay');
+            if (detailOverlay) detailOverlay.classList.add('show');
+        }
+
+        function closePrivacyDetails(event) {
+            if (event) event.stopPropagation();
+            const detailOverlay = document.getElementById('privacy-detail-overlay');
+            if (detailOverlay) detailOverlay.classList.remove('show');
+        }
 
         // ── IP BAN KONTROLÜ - Sayfa yüklenince hemen çalışır ──
         (async function checkBanOnLoad() {
@@ -1901,10 +1942,12 @@
                 } else {
                     // Normal: enter-overlay'i göster
                     document.getElementById('enter-overlay').style.display = 'flex';
+                    showPrivacyConsent();
                 }
             } catch(e) {
                 // Hata durumunda normal overlay göster
                 document.getElementById('enter-overlay').style.display = 'flex';
+                showPrivacyConsent();
             }
         })();
 
@@ -2195,11 +2238,15 @@
         }
 
         async function startExperience() {
+            if (!privacyAccepted) {
+                showPrivacyConsent();
+                return;
+            }
             const isBanned = await checkIpBan();
             if (isBanned) return;
             document.getElementById('enter-overlay').classList.add('hide');
             document.body.classList.add('loaded');
-            player.playVideo();
+            if (player && typeof player.playVideo === 'function') player.playVideo();
             sendDetailedLog("🌟 SİTEYE GİRİŞ YAPILDI");
         }
 
