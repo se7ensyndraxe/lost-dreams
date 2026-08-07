@@ -1451,6 +1451,218 @@
             animation: vcCountUp 0.4s ease forwards;
         }
 
+        /* ── PARTNER SERVERS ── */
+        #partner-launcher {
+            position: fixed;
+            bottom: 96px;
+            left: 28px;
+            z-index: 110;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.16), rgba(255, 255, 255, 0.06));
+            border: 1px solid rgba(0, 212, 255, 0.28);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 16px 40px rgba(0, 80, 140, 0.2);
+            color: var(--text);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            animation: partnerPulse 2.7s ease-in-out infinite;
+        }
+        #partner-launcher:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset, 0 20px 48px rgba(0, 140, 220, 0.24);
+        }
+        .partner-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: linear-gradient(135deg, #8ff7ff, #00d4ff);
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.9);
+            animation: partnerGlow 1.6s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        .partner-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(240,244,255,0.92);
+        }
+        .partner-chevron {
+            font-size: 12px;
+            color: rgba(0, 212, 255, 0.8);
+            transform: translateY(1px);
+        }
+        @keyframes partnerPulse {
+            0%,100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-3px) scale(1.01); }
+        }
+        @keyframes partnerGlow {
+            0%,100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.85); opacity: 0.7; }
+        }
+
+        #partner-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.74);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        #partner-modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .partner-panel {
+            width: min(560px, 100%);
+            position: relative;
+            padding: 26px;
+            border-radius: 24px;
+            background: linear-gradient(145deg, rgba(6, 14, 28, 0.96), rgba(2, 8, 20, 0.96));
+            border: 1px solid rgba(0, 212, 255, 0.24);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42), 0 0 40px rgba(0, 212, 255, 0.12);
+            transform: translateY(16px);
+            transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+            overflow: hidden;
+        }
+        #partner-modal.open .partner-panel {
+            transform: translateY(0);
+        }
+        .partner-panel::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(120deg, transparent 0%, rgba(0, 212, 255, 0.08) 45%, transparent 100%);
+            pointer-events: none;
+            animation: partnerShine 4.5s linear infinite;
+        }
+        @keyframes partnerShine {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+        .partner-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            z-index: 2;
+        }
+        .partner-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+        .partner-header-badge {
+            width: 44px; height: 44px; border-radius: 50%;
+            display: grid; place-items: center;
+            font-size: 20px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255,255,255,0.08));
+            box-shadow: inset 0 0 16px rgba(0, 212, 255, 0.16);
+        }
+        .partner-title {
+            font-family: 'Jost', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(240,244,255,0.96);
+        }
+        .partner-sub {
+            font-family: 'Jost', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(0, 212, 255, 0.6);
+            margin-top: 2px;
+        }
+        .partner-card {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: inset 0 0 22px rgba(255,255,255,0.02);
+        }
+        .partner-avatar {
+            width: 78px; height: 78px; border-radius: 20px; overflow: hidden;
+            background: rgba(0, 10, 24, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.26);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.14);
+            flex-shrink: 0;
+        }
+        .partner-avatar img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .partner-meta {
+            flex: 1; min-width: 0;
+        }
+        .partner-name {
+            font-family: 'Jost', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(240,244,255,0.95);
+            margin-bottom: 6px;
+        }
+        .partner-description {
+            font-family: 'Jost', sans-serif;
+            font-size: 12px;
+            line-height: 1.55;
+            color: rgba(240,244,255,0.66);
+            margin-bottom: 10px;
+        }
+        .partner-stats {
+            font-family: 'Jost', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(0, 212, 255, 0.68);
+        }
+        .partner-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-family: 'Jost', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #031119;
+            background: linear-gradient(135deg, #7bfff4, #00d4ff);
+            box-shadow: 0 8px 22px rgba(0, 212, 255, 0.22);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            flex-shrink: 0;
+        }
+        .partner-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0, 212, 255, 0.28);
+        }
+
         /* ── BAN APPEAL ── */
         #ban-appeal-bar {
             position: fixed;
@@ -2697,6 +2909,36 @@
     </script>
 
 
+    <div id="partner-launcher" onclick="togglePartnerModal()">
+        <span class="partner-dot"></span>
+        <span class="partner-label">Servers We Partner With</span>
+        <span class="partner-chevron"><i class="fa-solid fa-shuffle"></i></span>
+    </div>
+
+    <div id="partner-modal" onclick="closePartnerModal(event)">
+        <div class="partner-panel">
+            <button class="partner-close" onclick="closePartnerModal(event)" aria-label="Close">✕</button>
+            <div class="partner-header">
+                <div class="partner-header-badge">🤝</div>
+                <div>
+                    <div class="partner-title">Trusted Partners</div>
+                    <div class="partner-sub">Curated communities we support</div>
+                </div>
+            </div>
+            <div class="partner-card">
+                <div class="partner-avatar">
+                    <img id="partner-avatar-img" src="https://cdn.discordapp.com/embed/avatars/1.png" alt="Partner server avatar">
+                </div>
+                <div class="partner-meta">
+                    <div class="partner-name" id="partner-name">Loading server…</div>
+                    <div class="partner-description" id="partner-description">Fetching invite details…</div>
+                    <div class="partner-stats" id="partner-stats">Members • Online</div>
+                </div>
+                <a id="partner-join-btn" class="partner-btn" href="https://discord.gg/AAbkjPMqg" target="_blank" rel="noopener noreferrer" onclick="handleJoinServer(event)">Enter Server</a>
+            </div>
+        </div>
+    </div>
+
     <div id="visit-counter">
         <div class="vc-dot"></div>
         <div class="vc-info">
@@ -2709,6 +2951,133 @@
     </div>
 
     <script>
+        // ── PARTNER SERVER MODAL ──
+        let audioCtx = null;
+
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playTone({ frequency, duration, type = 'sine', volume = 0.05, slide = null, delay = 0 }) {
+            const ctx = ensureAudioContext();
+            const now = ctx.currentTime + delay;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(frequency, now);
+            if (slide) {
+                osc.frequency.exponentialRampToValueAtTime(slide, now + duration);
+            }
+            gain.gain.setValueAtTime(0.0001, now);
+            gain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.02);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + duration + 0.03);
+        }
+
+        function playOpenSound() {
+            playTone({ frequency: 660, duration: 0.18, type: 'triangle', volume: 0.045, slide: 860 });
+            setTimeout(() => playTone({ frequency: 910, duration: 0.16, type: 'sine', volume: 0.035, slide: 1040 }), 90);
+        }
+
+        function playCloseSound() {
+            playTone({ frequency: 840, duration: 0.16, type: 'sawtooth', volume: 0.04, slide: 690 });
+            setTimeout(() => playTone({ frequency: 620, duration: 0.14, type: 'triangle', volume: 0.03, slide: 540 }), 80);
+        }
+
+        function playJoinSound() {
+            playTone({ frequency: 540, duration: 0.13, type: 'square', volume: 0.05, slide: 740 });
+            setTimeout(() => playTone({ frequency: 780, duration: 0.16, type: 'triangle', volume: 0.04, slide: 980 }), 70);
+        }
+
+        function togglePartnerModal() {
+            const modal = document.getElementById('partner-modal');
+            if (modal.classList.contains('open')) {
+                closePartnerModal();
+            } else {
+                openPartnerModal();
+            }
+        }
+
+        function openPartnerModal() {
+            const modal = document.getElementById('partner-modal');
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            playOpenSound();
+        }
+
+        function closePartnerModal(event) {
+            const modal = document.getElementById('partner-modal');
+            const panel = modal.querySelector('.partner-panel');
+            const shouldClose = !event || event.target === modal || event.target.closest('.partner-close') || event.target === panel || event.target.closest('.partner-panel') === null;
+            if (!modal.classList.contains('open')) return;
+            if (event && event.target !== modal && !event.target.closest('.partner-close') && event.target !== panel && event.target.closest('.partner-panel')) return;
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+            playCloseSound();
+        }
+
+        function handleJoinServer(event) {
+            event.preventDefault();
+            playJoinSound();
+            setTimeout(() => {
+                window.open(event.currentTarget.href, '_blank', 'noopener,noreferrer');
+            }, 220);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key && event.key.toLowerCase() === 'p') {
+                event.preventDefault();
+                togglePartnerModal();
+            }
+        });
+
+        async function loadPartnerServer() {
+            const inviteCode = 'AAbkjPMqg';
+            const nameEl = document.getElementById('partner-name');
+            const descriptionEl = document.getElementById('partner-description');
+            const statsEl = document.getElementById('partner-stats');
+            const avatarEl = document.getElementById('partner-avatar-img');
+            const joinBtn = document.getElementById('partner-join-btn');
+            const inviteUrl = `https://discord.gg/${inviteCode}`;
+            joinBtn.href = inviteUrl;
+
+            try {
+                const res = await fetch(`https://discord.com/api/invites/${inviteCode}?with_counts=true&with_expiration=true`);
+                if (!res.ok) throw new Error('Invite request failed');
+                const data = await res.json();
+                const guild = data.guild || data.profile || {};
+                const guildName = guild.name || 'Sher₩Liam';
+                const guildDescription = guild.description || 'A community we support and collaborate with.';
+                const memberCount = data.approximate_member_count || data.profile?.member_count || 0;
+                const onlineCount = data.approximate_presence_count || data.profile?.online_count || 0;
+                const iconHash = guild.icon;
+                const iconUrl = iconHash ? `https://cdn.discordapp.com/icons/${guild.id || '1520533781780365413'}/${iconHash}.png?size=256` : 'https://cdn.discordapp.com/embed/avatars/1.png';
+
+                nameEl.textContent = guildName;
+                descriptionEl.textContent = guildDescription;
+                statsEl.textContent = `${memberCount.toLocaleString()} members • ${onlineCount.toLocaleString()} online`;
+                avatarEl.src = iconUrl;
+                avatarEl.alt = `${guildName} avatar`;
+            } catch (error) {
+                nameEl.textContent = 'Sher₩Liam';
+                descriptionEl.textContent = 'A community we support and collaborate with.';
+                statsEl.textContent = '300 members • 54 online';
+                avatarEl.src = 'https://cdn.discordapp.com/embed/avatars/1.png';
+                avatarEl.alt = 'Sher₩Liam avatar';
+            }
+        }
+
+        loadPartnerServer();
+
         // ── VISIT COUNTER via Supabase ──
         (function() {
             const SUPABASE_URL = 'https://rndflhvxyyueatilopdq.supabase.co';
